@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{5a69a65b-823a-49e4-9117-3c70ca11b5d5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\engine\FontUtils.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\GameComponent.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\GameEngine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\GamepadComponent.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\GameUtils.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\GameWindow.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\Maze.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\MessageBoxScene.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\Node.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\ParticleSystem.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\QDraw.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\SceneEngine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\Shot.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\SoundComponent.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\SpriteUtils.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\Terrain.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\ToString.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\XMesh.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\Collision.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\ConsoleOutput.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\Fail.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\engine\GameEngine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\GamepadComponent.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\GameUtils.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\GameWindow.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\Maze.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\MessageBoxScene.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\Node.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\ParticleSystem.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\QDraw.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\SceneEngine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\SoundComponent.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\SpriteUtils.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\Terrain.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\XMesh.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\Collision.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\Fail.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\FontUtils.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
