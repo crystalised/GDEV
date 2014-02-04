@@ -30,7 +30,9 @@ void Player::Update(float dt) //Update player based on input
 	if (mpGamepad->IsGamepadConnected(0))
 	{
 		move = mpGamepad->GetVector(0, LEFT_X, NONE, LEFT_Y);
-		turnCam = mpGamepad->GetVector(0, RIGHT_Y_INV, RIGHT_X, NONE);
+		turnCam = mpGamepad->GetVector(0, RIGHT_Y_INV, RIGHT_X, NONE) / 5; //reduce sensitivity
+		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_A))
+			Jump();
 	}
 	else
 	{
@@ -55,7 +57,7 @@ void Player::Update(float dt) //Update player based on input
 	mPlayer.Move(move * dt * SPEED);
 	mPlayer.Turn(turnCam * dt * turn);
 
-	//	//Limit player from looking past straight up or down
+	//Limit player from looking past straight up or down
 	float limit = (float)(M_PI / 2) - 0.01f;
 
 	mPlayer.mHpr.x = (float)__max(-limit, mPlayer.mHpr.x);
@@ -111,8 +113,9 @@ void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBom
 	mBombExplode = new CExplosion();
 	mBombExplode->Init(inDevice, "../media/Particle/spark.bmp");
 
-	settings.LifeTime = 0.5f;
+	settings.LifeTime = 0.15f;
 	settings.StartColor = D3DCOLOR_XRGB(255, 141, 29);
+	settings.Size = 0.2;
 
 	mBombTrail = new CParticleSystem();
 	mBombTrail->Init(inDevice, "../media/Particle/flare.bmp", settings);
@@ -127,46 +130,25 @@ void Player::ChangeWeapon(int inW)
 
 void Player::UpdateWeapon(float dt)
 {
-	if (CGameWindow::KeyDown(VK_LBUTTON))
+	if (mpGamepad->IsGamepadConnected(0))
 	{
-		const D3DXVECTOR3 FORWARD(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 0.2f, 1.0f); //Direction of particles
-		D3DXVECTOR3 vel = mPlayer.RotateVector(FORWARD);	// gets camera's forward
-		switch (currentWeapon)
+		if (mpGamepad->GetRightTrigger(0) > 0)
 		{
-			case 1:
-			{
-				vel *= CParticleSystem::GetRandomFloat(0.2f, 1.0f) * 200;
-
-				CShot* shot = new CShot();
-				// this is the direction the player is facing
-				// setup the shot starting at player location & direction
-				shot->Init(mFlameMesh, mPlayer.GetPos(), mPlayer.GetHpr());
-				shot->mPos = mPlayer.GetPos() + D3DXVECTOR3(-0.2f, -0.2f, 0);
-				shot->mVel = vel;
-				shot->mScale = 0.5f;	// small
-				shot->mLife = 50; //Short life
-				mFlames.push_back(shot);	// add to vector
-
-				mFlameThrower->AddParticle(mPlayer.GetPos() + D3DXVECTOR3(-0.2f, -0.2f, 0), vel); //Spawnpoint of particles
-				break;
-			}
-			case 2:
-			{
-				if (clock() - bomb_used_time > bomb_CD)
-				{
-					vel *= 25;
-
-					CShot* shot = new CShot();
-					shot->Init(mBombMesh, mPlayer.GetPos(), mPlayer.GetHpr());
-					shot->mPos = mPlayer.GetPos() + D3DXVECTOR3(-0.2f, 0, -0.5f);
-					shot->mVel = vel;
-					shot->mScale = 1.0f;
-					shot->mLife = 3000;
-					mBombs.push_back(shot);
-					bomb_used_time = clock();
-					break;
-				}
-			}
+			Shoot();
+		}
+		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_LEFT_SHOULDER))
+		{
+			if (currentWeapon == 1)
+				currentWeapon = 2;
+			else if (currentWeapon == 2)
+				currentWeapon = 1;
+		}
+	}
+	else
+	{
+		if (CGameWindow::KeyDown(VK_LBUTTON))
+		{
+			Shoot();
 		}
 	}
 
@@ -189,5 +171,48 @@ void Player::Jump()
 	{
 		jumpHeight = mPlayer.GetPos().y + 3;
 		playerState = JUMPING;
+	}
+}
+
+void Player::Shoot()
+{
+	CGameWindow::ClearKeyPress();
+	const D3DXVECTOR3 FORWARD(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 0.2f, 1.0f); //Direction of particles
+	D3DXVECTOR3 vel = mPlayer.RotateVector(FORWARD);	// gets camera's forward
+
+	switch (currentWeapon)
+	{
+	case 1:
+	{
+		vel *= CParticleSystem::GetRandomFloat(0.2f, 1.0f) * 200;
+
+		CShot* shot = new CShot();
+		// this is the direction the player is facing
+		// setup the shot starting at player location & direction
+		shot->Init(mFlameMesh, mPlayer.GetPos(), mPlayer.GetHpr());
+		shot->mPos = mPlayer.GetPos() + D3DXVECTOR3(-0.2f, -0.2f, 0);
+		shot->mVel = vel;
+		shot->mScale = 0.5f;	// small
+		shot->mLife = 50; //Short life
+		mFlames.push_back(shot);	// add to vector
+
+		mFlameThrower->AddParticle(mPlayer.GetPos() + D3DXVECTOR3(-0.2f, -0.2f, 0), vel); //Spawnpoint of particles
+		break;
+	}
+	case 2:
+		if (clock() - bomb_used_time > bomb_CD)
+		{
+			vel *= 25;
+
+			CShot* shot = new CShot();
+			shot->Init(mBombMesh, mPlayer.GetPos(), mPlayer.GetHpr());
+			shot->mPos = mPlayer.GetPos() + D3DXVECTOR3(-0.2f, 0, -0.5f);
+			shot->mVel = vel;
+			shot->mScale = 1.0f;
+			shot->mLife = 2000;
+			mBombs.push_back(shot);
+			bomb_used_time = clock();
+			break;
+		}
 	}
 }

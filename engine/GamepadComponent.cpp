@@ -63,7 +63,6 @@ bool CGamepadComponent::IsButtonDown(int gamepadID, int buttonId)
 		// the button is currently down
 		// ...
 		WORD wButtons = g_Controllers[gamepadID].state.Gamepad.wButtons;
-
 		if (wButtons & buttonId)
 		{
 			return true;
@@ -77,6 +76,18 @@ bool CGamepadComponent::IsButtonDown(int gamepadID, int buttonId)
 		return false;
 }
 
+bool CGamepadComponent::IsButtonPressed(int gamepadID, int buttonId)
+{
+	if (!IsButtonDown(gamepadID, buttonId))
+		buttonDown = false;
+	if (IsButtonDown(gamepadID, buttonId) && buttonDown == false)
+	{
+		buttonDown = true;
+		return true;
+	}
+	else
+		return false;
+}
 
 D3DXVECTOR3 CGamepadComponent::GetVector(int gamepadID, AXIS_ENUM axisX, AXIS_ENUM axisY, AXIS_ENUM axisZ)
 {

@@ -42,6 +42,7 @@ public:
 	bool IsButtonDown(int gamepadID, int buttonId);
 	/// returns true if mouse button is down now, implement this if you want button press events
 	//bool ButtonPress(int buttId);
+	bool IsButtonPressed(int gamepadID, int buttonId);
 
 	/// Calls GetAxis() to make a Vector3
 	D3DXVECTOR3 GetVector(int gamepadID, AXIS_ENUM axisX, AXIS_ENUM axisY, AXIS_ENUM axisZ);
@@ -63,4 +64,5 @@ public:
 protected: // data
 	CONTROLLER_STATE g_Controllers[MAX_CONTROLLERS];
 	bool    g_bDeadZoneOn; // turn on Dead Zones by default
+	bool buttonDown;
 };

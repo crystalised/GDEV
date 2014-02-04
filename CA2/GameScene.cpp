@@ -274,8 +274,13 @@ void GameScene::CollisionCheck()
 	{
 		if ((mpPlayer->mBombs[b]->GetPos().y) < (mpTerrain->GetHeight(mpPlayer->mBombs[b]->GetPos().x, mpPlayer->mBombs[b]->GetPos().z))) //collision between bomb and ground
 		{
-			mpPlayer->mBombExplode->Explode(mpPlayer->mBombs[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 2.5f));
+			mpPlayer->mBombExplode->Explode(mpPlayer->mBombs[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 50);
 			mpPlayer->mBombs[b]->Destroy();
+		}
+
+		if (!mpPlayer->mBombs[b]->IsAlive())
+		{
+			mpPlayer->mBombExplode->Explode(mpPlayer->mBombs[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 10);
 		}
 	}
 

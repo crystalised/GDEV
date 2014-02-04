@@ -3,7 +3,7 @@
 Boss::Boss(CXMesh* inBulletMesh, CTerrain* inTerrain)
 {
 	mTerrain = inTerrain;
-	flameDirection = D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 1.0f, 0.2f) * (CParticleSystem::GetRandomFloat(0.2f, 1.0f) * 100);
+	flameDirection = D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 1.0f, 0.2f) * (CParticleSystem::GetRandomFloat(0.2f, 1.0f) * 10);
 	bossState = IDLING;
 
 	//Init boss weapon

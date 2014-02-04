@@ -3,7 +3,7 @@
 Enemy::Enemy(CXMesh* inBulletMesh, CTerrain* inTerrain) //Input enemy mesh and terrain, init player
 {
 	mTerrain = inTerrain;
-	flameDirection = D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 1.0f, 0.2f) * (CParticleSystem::GetRandomFloat(0.2f, 1.0f) * 100);
+	flameDirection = D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 1.0f, 0.2f) * (CParticleSystem::GetRandomFloat(0.2f, 1.0f) * 10);
 	enemyState = IDLING;
 
 	//Init enemy weapon

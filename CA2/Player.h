@@ -58,4 +58,5 @@ public:
 	void ChangeWeapon(int inW);
 	void UpdateWeapon(float dt);
 	void Jump();
+	void Shoot();
 };
