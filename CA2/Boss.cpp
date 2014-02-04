@@ -69,7 +69,7 @@ void Boss::Update(float dt, CMeshNode* inPlayer)
 			}
 			break;
 		}
-		UpdateMeshNodes(mBullets, dt);
+		UpdateMeshNodes(mBullets, dt, mTerrain);
 		DeleteDeadMeshNodes(mBullets);
 }
 

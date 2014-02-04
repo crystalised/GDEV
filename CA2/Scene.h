@@ -1,6 +1,8 @@
 #pragma once
 #include "CameraUtils.h"
 
+static int cogAvailable;
+
 class MenuScene : public CScene
 {
 public:
@@ -30,6 +32,7 @@ class GameScene : public CScene
 	CXMesh* mpNPCMesh;
 	CXMesh* mpCogWheelMesh;
 	Player* mpPlayer;
+	int maxEnemies;
 	Enemy* mpEnemy;
 	vector<Enemy*> mEnemies;
 	Boss* mpBoss;
@@ -38,7 +41,6 @@ class GameScene : public CScene
 	NPC* mpNPC;
 	Item* mpCogWheel;
 	vector<Item*> mCog;
-	int cogAvailable;
 
 	ID3DXFont* gameFont;
 

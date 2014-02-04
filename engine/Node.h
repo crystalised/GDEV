@@ -8,6 +8,7 @@
 #include <vector>
 #include <d3dx9.h>
 #include "XMesh.h"
+#include "Terrain.h"
 
 /** The CNode class is the basic (position & orientation) class.
 It provides basic movement capabilities & little else.
@@ -271,6 +272,7 @@ This code can be though of as: (foreach living object: call Update)
 \param dt time since last update
 */
 void UpdateMeshNodes(const std::vector<CMeshNode*>& nodes,float dt);
+void UpdateMeshNodes(const std::vector<CMeshNode*>& nodes, float dt, CTerrain* inTerrain);
 
 /** Draws all living members of the group.
 This code can be though of as: (foreach living object: call Draw)

@@ -20,6 +20,7 @@ Player::~Player()
 	DeleteMeshNodes(mFlames);
 	DeleteMeshNodes(mBombs);
 	SAFE_DELETE(mBombExplode);
+	SAFE_DELETE(mBombTrail);
 }
 
 void Player::Update(float dt) //Update player based on input
@@ -85,6 +86,7 @@ void Player::Draw()
 	DrawMeshNodes(mBombs);
 	mBombExplode->Draw(IDENTITY_MAT);
 	//DrawMeshNodes(mFlames);
+	mBombTrail->Draw(IDENTITY_MAT);
 }
 
 void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBombMesh)
@@ -95,7 +97,7 @@ void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBom
 
 	SParticleSetting settings;
 	settings.Size = 0.25f;
-	settings.LifeTime = 1.5f;
+	settings.LifeTime = 0.5f;
 	settings.StartColor = D3DCOLOR_XRGB(0, 42, 255);	// start bright
 	settings.EndColor = BLACK_COL;	// cool to black
 	// additive blend
@@ -108,6 +110,12 @@ void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBom
 	mBombMesh = inBombMesh;
 	mBombExplode = new CExplosion();
 	mBombExplode->Init(inDevice, "../media/Particle/spark.bmp");
+
+	settings.LifeTime = 0.5f;
+	settings.StartColor = D3DCOLOR_XRGB(255, 141, 29);
+
+	mBombTrail = new CParticleSystem();
+	mBombTrail->Init(inDevice, "../media/Particle/flare.bmp", settings);
 }
 
 void Player::ChangeWeapon(int inW)
@@ -161,9 +169,16 @@ void Player::UpdateWeapon(float dt)
 			}
 		}
 	}
+
+	for (int i = 0; i < mBombs.size(); i++)
+	{
+		mBombTrail->AddParticle(mBombs[i]->GetPos(), D3DXVECTOR3(0, 0, 0));
+	}
+
 	mFlameThrower->Update(dt);
 	mBombExplode->Update(dt);
-	UpdateMeshNodes(mFlames, dt);
+	mBombTrail->Update(dt);
+	UpdateMeshNodes(mFlames, dt, mTerrain);
 	UpdateMeshNodes(mBombs, dt);
 }
 

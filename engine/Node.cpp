@@ -268,7 +268,7 @@ void NormalizeRotation(CMeshNode* inNode)
 	inNode->SetHpr(v);
 }
 
-void UpdateMeshNodes(const std::vector<CMeshNode*>& nodes,float dt)
+void UpdateMeshNodes(const std::vector<CMeshNode*>& nodes, float dt)
 {
 	//TODO(UpdateMeshNodes);
 	// for each node, if its alive, update it
@@ -277,6 +277,20 @@ void UpdateMeshNodes(const std::vector<CMeshNode*>& nodes,float dt)
 		if (nodes[i]->IsAlive())
 		{
 			nodes[i]->Update(dt);
+		}
+	}
+}
+//Alternate mesh node update which factors in terrain
+void UpdateMeshNodes(const std::vector<CMeshNode*>& nodes,float dt, CTerrain* inTerrain)
+{
+	//TODO(UpdateMeshNodes);
+	// for each node, if its alive, update it
+	for (int i = nodes.size() - 1; i >= 0; i--)
+	{
+		if (nodes[i]->IsAlive())
+		{
+			nodes[i]->Update(dt);
+			nodes[i]->SetPos(inTerrain->GetPointOnGround(nodes[i]->GetPos(), 1.0f));
 		}
 	}
 }

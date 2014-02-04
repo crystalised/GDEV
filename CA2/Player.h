@@ -28,6 +28,7 @@ public:
 	vector<CMeshNode*> mFlames; //Vector for flame node
 	int flameThrowerLvl;
 	//Bomb
+	CParticleSystem* mBombTrail;
 	CXMesh* mBombMesh;
 	vector<CMeshNode*> mBombs;
 	const int bomb_CD = 1000;

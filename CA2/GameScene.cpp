@@ -5,7 +5,7 @@
 
 void GameScene::Enter()
 {
-	mpTerrain = new CTerrain(GetDevice(), "../media/Terrain/coastMountains.bmp", 5, 0.5);
+	mpTerrain = new CTerrain(GetDevice(), "../media/Terrain/samplu.bmp", 5, 0.5);
 	mpTerrain->GenerateTexture(D3DXVECTOR3(0.5f, 1, 0));
 	//Setup weather
 	mpWeather = new CPrecipitation();
@@ -20,7 +20,7 @@ void GameScene::Enter()
 	mpEnemyBulletMesh = new CXMesh(GetDevice(), "../media/yellow_ball.x");
 	mpBossMesh = new CXMesh(GetDevice(), "../media/crate.x");
 	mpBossBulletMesh = new CXMesh(GetDevice(), "../media/yellow_ball.x");
-	mpNPCMesh = new CXMesh(GetDevice(), "../media/teapot.x");
+	mpNPCMesh = new CXMesh(GetDevice(), "../media/Model/Model.x");
 	mpCogWheelMesh = new CXMesh(GetDevice(), "../media/teapot.x");
 
 	//Setup player and camera
@@ -30,6 +30,7 @@ void GameScene::Enter()
 	cogAvailable = 0;
 
 	//Setup enemies
+	maxEnemies = 4;
 	for (int x = -50; x < 50; x += 50)
 	{
 		for (int z = -50; z < 50; z += 50)
@@ -91,6 +92,20 @@ void GameScene::Update(float dt)
 	mpWeather->Update(dt);
 
 	UpdateEnemies(mEnemies, &mpPlayer->mPlayer, dt);
+
+	if (maxEnemies < 4)
+	{
+		int x = randi(-10, 10);
+		int z = randi(-10, 10);
+
+		mpEnemy = new Enemy(mpEnemyBulletMesh, mpTerrain);
+		mpEnemy->Init(mpEnemyMesh);
+		mpEnemy->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(x, mpTerrain->GetHeight(x, z), z), 1.0f));
+		mpEnemy->mLife = 100;
+		mEnemies.push_back(mpEnemy);
+
+		maxEnemies += 1;
+	}
 
 	if (bossActive)
 	{
@@ -158,7 +173,6 @@ void GameScene::Draw(float dt)
 
 	//Items
 	DrawItems(mCog);
-
 
 	//GetEngine()->DrawColourTint(D3DXCOLOR(0.4, 0, 0, (100 - mpPlayer->mPlayer.mLife) / 100));
 
@@ -233,7 +247,7 @@ void GameScene::CollisionCheck()
 			{
 				mpPlayer->mBombs[b]->Destroy();
 				mEnemies[en]->Destroy();
-				mpPlayer->mBombExplode->Explode(mpPlayer->mBombs[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 2.5f));
+				mpPlayer->mBombExplode->Explode(mpPlayer->mBombs[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 50);
 			}
 		}
 		for (int n = 0; n < mEnemies[en]->mBullets.size(); n++)
@@ -252,7 +266,7 @@ void GameScene::CollisionCheck()
 			mpCogWheel->Init(mpCogWheelMesh);
 			mpCogWheel->SetPos(mEnemies[en]->GetPos());
 			mCog.push_back(mpCogWheel);
-			
+			maxEnemies -= 1;
 		}
 	}
 
