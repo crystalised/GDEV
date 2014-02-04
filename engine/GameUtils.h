@@ -182,3 +182,18 @@ inline std::ostream& operator<<(std::ostream& os,const D3DXVECTOR3& v)
 	_snprintf(buff,80,"(%.2f %.2f %.2f)",v.x,v.y,v.z);
 	return os<<buff;
 }
+
+inline float NormalizeAngle(float ang)
+{
+	if (ang>D3DX_PI)	ang -= D3DX_PI * 2;
+	if (ang<-D3DX_PI)	ang += D3DX_PI * 2;
+	return ang;
+}
+inline float GetDirection(D3DXVECTOR3 dir)
+{
+	return atan2(dir.x, dir.z);
+}
+inline float GetDeltaDirection(float dira, float dirb)
+{
+	return fabs(NormalizeAngle(dira - dirb));
+}

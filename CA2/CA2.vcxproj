@@ -105,8 +105,11 @@
     <ClInclude Include="..\engine\Terrain.h" />
     <ClInclude Include="..\engine\ToString.h" />
     <ClInclude Include="..\engine\XMesh.h" />
+    <ClInclude Include="Boss.h" />
     <ClInclude Include="CameraUtils.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="Npc.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />
   </ItemGroup>
@@ -128,10 +131,19 @@
     <ClCompile Include="..\engine\SpriteUtils.cpp" />
     <ClCompile Include="..\engine\Terrain.cpp" />
     <ClCompile Include="..\engine\XMesh.cpp" />
+    <ClCompile Include="Boss.cpp" />
     <ClCompile Include="CameraUtils.cpp" />
+    <ClCompile Include="CreditScene.cpp" />
+    <ClCompile Include="DeathScene.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="HelpScene.cpp" />
+    <ClCompile Include="InitGame.cpp" />
+    <ClCompile Include="MenuScene.cpp" />
+    <ClCompile Include="Npc.cpp" />
+    <ClCompile Include="NPCScene.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="VictoryScene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

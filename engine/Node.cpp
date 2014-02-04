@@ -250,6 +250,24 @@ void DrawMeshNodeBounds(const std::vector<CMeshNode*>& nodes,IDirect3DDevice9* p
 	}
 }
 
+void NormalizeRotation(CMeshNode* inNode)
+{
+	D3DXVECTOR3 v = inNode->GetHpr();
+	if (v.x > D3DX_PI)
+		v.x -= D3DX_PI * 2;
+	if (v.x < -D3DX_PI)
+		v.x += D3DX_PI * 2;
+	if (v.y > D3DX_PI)
+		v.y -= D3DX_PI * 2;
+	if (v.y < -D3DX_PI)
+		v.y += D3DX_PI * 2;
+	if (v.z > D3DX_PI)
+		v.z -= D3DX_PI * 2;
+	if (v.z < -D3DX_PI)
+		v.z += D3DX_PI * 2;
+	inNode->SetHpr(v);
+}
+
 void UpdateMeshNodes(const std::vector<CMeshNode*>& nodes,float dt)
 {
 	//TODO(UpdateMeshNodes);

@@ -16,6 +16,8 @@
 #include "GamepadComponent.h" //Gamepad component
 #include "Player.h" //Player
 #include "Enemy.h" //Enemy
+#include "Boss.h" //Boss
+#include "Npc.h" //Npc
 
 class CameraUtils : public CCameraNode
 {

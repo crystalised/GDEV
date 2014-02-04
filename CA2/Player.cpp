@@ -1,13 +1,17 @@
 #include "Player.h"
 
-Player::Player(CXMesh* inPlayerMesh, CTerrain* inTerrain) //Input player mesh and terrain, init player
+Player::Player(CXMesh* inPlayerMesh, CTerrain* inTerrain, CSceneEngine* inEngine) //Input player mesh and terrain, init player
 {
 	mTerrain = inTerrain;
 	mPlayer.Init(inPlayerMesh);
 	mPlayer.SetPos(mTerrain->GetPointOnGround(mPlayer.GetPos(), groundOffset));
+	mPlayer.mLife = 100;
 	playerState = STANDING; //Player default state is standing
 	currentWeapon = 1; //Player default weapon is flame thrower(1)
 	bomb_used_time = 0;
+
+	//Init gamepad
+	mpGamepad = inEngine->FindComponent<CGamepadComponent>();
 }
 
 Player::~Player()
@@ -20,11 +24,34 @@ Player::~Player()
 
 void Player::Update(float dt) //Update player based on input
 {
-	D3DXVECTOR3 move = GetKeyboardVector(WSAD_KEYS);
-	mPlayer.Move(move * dt * SPEED);
+	D3DXVECTOR3 move; //Player move vector
+	D3DXVECTOR3 turnCam = D3DXVECTOR3(0.f, 0.f, 0.f); //Turn cam vector
+	if (mpGamepad->IsGamepadConnected(0))
+	{
+		move = mpGamepad->GetVector(0, LEFT_X, NONE, LEFT_Y);
+		turnCam = mpGamepad->GetVector(0, RIGHT_Y_INV, RIGHT_X, NONE);
+	}
+	else
+	{
+		move = GetKeyboardVector(WSAD_KEYS);
+		turnCam = GetMouseTurnVector(100, true);
 
-	D3DXVECTOR3 turnCam(0.f, 0.f, 0.f);
-	turnCam = GetMouseTurnVector(100, true);
+		if (CGameWindow::KeyPress(VK_SPACE))
+		{
+			Jump();
+		}
+
+		if (CGameWindow::KeyPress('1'))
+		{
+			ChangeWeapon(1);
+		}
+		else if (CGameWindow::KeyPress('2'))
+		{
+			ChangeWeapon(2);
+		}
+	}
+
+	mPlayer.Move(move * dt * SPEED);
 	mPlayer.Turn(turnCam * dt * turn);
 
 	//	//Limit player from looking past straight up or down
@@ -32,11 +59,6 @@ void Player::Update(float dt) //Update player based on input
 
 	mPlayer.mHpr.x = (float)__max(-limit, mPlayer.mHpr.x);
 	mPlayer.mHpr.x = (float)__min(+limit, mPlayer.mHpr.x);
-
-	if (CGameWindow::KeyPress(VK_SPACE))
-	{
-		Jump();
-	}
 
 	switch (playerState)
 	{
@@ -54,15 +76,6 @@ void Player::Update(float dt) //Update player based on input
 			mPlayer.SetPos(mTerrain->GetPointOnGround(mPlayer.GetPos(), groundOffset));
 			break;
 	}
-
-	if (CGameWindow::KeyPress('1'))
-	{
-		ChangeWeapon(1);
-	}
-	else if (CGameWindow::KeyPress('2'))
-	{
-		ChangeWeapon(2);
-	}
 }
 
 void Player::Draw()
@@ -74,9 +87,11 @@ void Player::Draw()
 	//DrawMeshNodes(mFlames);
 }
 
-void Player::InitWeapon(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBombMesh)
+void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBombMesh)
 {
 	mFlameMesh = inFlameMesh;
+
+	flameThrowerLvl = 1;
 
 	SParticleSetting settings;
 	settings.Size = 0.25f;
@@ -135,7 +150,7 @@ void Player::UpdateWeapon(float dt)
 
 					CShot* shot = new CShot();
 					shot->Init(mBombMesh, mPlayer.GetPos(), mPlayer.GetHpr());
-					shot->mPos = mPlayer.GetPos();
+					shot->mPos = mPlayer.GetPos() + D3DXVECTOR3(-0.2f, 0, -0.5f);
 					shot->mVel = vel;
 					shot->mScale = 1.0f;
 					shot->mLife = 3000;

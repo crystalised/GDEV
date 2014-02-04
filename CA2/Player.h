@@ -9,6 +9,8 @@
 #include "shot.h"
 #include <vector>
 #include <ctime>
+#include "GamepadComponent.h"
+#include "SceneEngine.h"
 
 #define M_PI 3.14159265358979323846
 
@@ -24,12 +26,15 @@ public:
 	CParticleSystem* mFlameThrower;
 	CXMesh* mFlameMesh; //Model for flames
 	vector<CMeshNode*> mFlames; //Vector for flame node
+	int flameThrowerLvl;
 	//Bomb
 	CXMesh* mBombMesh;
 	vector<CMeshNode*> mBombs;
 	const int bomb_CD = 1000;
 	clock_t bomb_used_time;
 	CExplosion* mBombExplode;
+	//Gamepad
+	CGamepadComponent* mpGamepad;
 	
 	int currentWeapon;
 
@@ -44,11 +49,11 @@ public:
 	D3DXVECTOR3 gravity = D3DXVECTOR3(0, 9.81f, 0);
 
 public:
-	Player(CXMesh* inPlayerMesh, CTerrain* inTerrain); //input player mesh and terrain to initialze player
+	Player(CXMesh* inPlayerMesh, CTerrain* inTerrain, CSceneEngine* inEngine); //input player mesh and terrain to initialze player
 	~Player();
 	void Update(float dt);
 	void Draw();
-	void InitWeapon(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBombMesh);
+	void Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBombMesh);
 	void ChangeWeapon(int inW);
 	void UpdateWeapon(float dt);
 	void Jump();

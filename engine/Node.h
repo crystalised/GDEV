@@ -328,6 +328,8 @@ void DeleteDeadMeshNodes(std::vector<CMeshNode*>& vec);
 
 ///@}
 
+void NormalizeRotation(CMeshNode* inNode);
+
 //////////////////////////////////////////////////////////////////////////
 
 /** The CCameraNode is a node for holding camera infomation.
