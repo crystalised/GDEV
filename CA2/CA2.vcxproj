@@ -139,6 +139,7 @@
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="HelpScene.cpp" />
     <ClCompile Include="InitGame.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="Npc.cpp" />
     <ClCompile Include="NPCScene.cpp" />

@@ -21,16 +21,18 @@ void GameScene::Enter()
 	mpBossMesh = new CXMesh(GetDevice(), "../media/crate.x");
 	mpBossBulletMesh = new CXMesh(GetDevice(), "../media/yellow_ball.x");
 	mpNPCMesh = new CXMesh(GetDevice(), "../media/teapot.x");
+	mpCogWheelMesh = new CXMesh(GetDevice(), "../media/teapot.x");
 
 	//Setup player and camera
 	mpPlayer = new Player(mpPlayerMesh, mpTerrain, GetEngine());
 	mpPlayer->Init(GetDevice(), mpFlameMesh, mpBombMesh);
 	mCamera.mMode = 1;
+	cogAvailable = 0;
 
 	//Setup enemies
-	for (int x = -50; x < 50; x += 25)
+	for (int x = -50; x < 50; x += 50)
 	{
-		for (int z = -50; z < 50; z += 25)
+		for (int z = -50; z < 50; z += 50)
 		{
 			mpEnemy = new Enemy(mpEnemyBulletMesh, mpTerrain);
 			mpEnemy->Init(mpEnemyMesh);
@@ -139,8 +141,9 @@ void GameScene::Draw(float dt)
 	//Weather
 	mpWeather->Draw(IDENTITY_MAT);
 
+	//Enemies
 	DrawEnemies(mEnemies);
-	//Draw player
+	//Player
 	mpPlayer->Draw();
 
 	//Boss
@@ -150,7 +153,12 @@ void GameScene::Draw(float dt)
 		DrawMeshNodes(mpBoss->mBullets);
 	}
 
+	//NPC
 	mpNPC->Draw();
+
+	//Items
+	DrawItems(mCog);
+
 
 	//GetEngine()->DrawColourTint(D3DXCOLOR(0.4, 0, 0, (100 - mpPlayer->mPlayer.mLife) / 100));
 
@@ -164,7 +172,8 @@ void GameScene::Draw(float dt)
 	sout << "\n FPS: " << GetEngine()->GetFps();
 	sout << "\n Health: " << mpPlayer->mPlayer.mLife;
 	sout << "\n boss Active: " << bossActive;
-	sout << "\n Boss Health: " << mpBoss->mLife; 
+	sout << "\n Boss Health: " << mpBoss->mLife;
+	sout << "\n Cogs Available: " << cogAvailable;
 
 	DrawD3DFont(gameFont, sout.str().c_str(), 20, 20, RED_COL);
 
@@ -186,6 +195,7 @@ void GameScene::Leave()
 	SAFE_DELETE(mpBoss);
 	SAFE_DELETE(mpNPCMesh);
 	SAFE_DELETE(mpNPC);
+	SAFE_DELETE(mpCogWheelMesh);
 
 	//Delete all enemies
 	for (int i = (int)mEnemies.size() - 1; i >= 0; i--)
@@ -193,6 +203,13 @@ void GameScene::Leave()
 		delete mEnemies[i];
 	}
 	mEnemies.clear();
+
+	//Delete all cog wheels(item)
+	for (int i = (int)mCog.size() - 1; i >= 0; i--)
+	{
+		delete mCog[i];
+	}
+	mCog.clear();
 }
 
 void GameScene::CollisionCheck()
@@ -228,6 +245,15 @@ void GameScene::CollisionCheck()
 			}
 			DeleteDeadMeshNodes(mEnemies[en]->mBullets); //Delete dead enemy bullets
 		}
+
+		if (mEnemies[en]->mLife == 0)
+		{
+			mpCogWheel = new Item();
+			mpCogWheel->Init(mpCogWheelMesh);
+			mpCogWheel->SetPos(mEnemies[en]->GetPos());
+			mCog.push_back(mpCogWheel);
+			
+		}
 	}
 
 	for (int b = 0; b < mpPlayer->mBombs.size(); b++) //Bomb hitting ground
@@ -236,6 +262,16 @@ void GameScene::CollisionCheck()
 		{
 			mpPlayer->mBombExplode->Explode(mpPlayer->mBombs[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 2.5f));
 			mpPlayer->mBombs[b]->Destroy();
+		}
+	}
+
+	//Item
+	for (int i = 0; i < mCog.size(); i++)
+	{
+		if (CollisionMeshNode(&mpPlayer->mPlayer, mCog[i]))
+		{
+			cogAvailable += mCog[i]->amount;
+			mCog[i]->Destroy();
 		}
 	}
 
@@ -277,6 +313,7 @@ void GameScene::CollisionCheck()
 	DeleteDeadMeshNodes(mpPlayer->mFlames); //Delete dead flame mesh
 	DeleteDeadMeshNodes(mpPlayer->mBombs); //Delete dead bomb mesh
 	DeleteDeadEnemies(mEnemies); //Delete dead enemies
+	DeleteCollectedItems(mCog); //Delete collected items
 }
 
 void GameScene::TalkToNpc()

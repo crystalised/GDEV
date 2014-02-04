@@ -28,6 +28,7 @@ class GameScene : public CScene
 	CXMesh* mpBossMesh;
 	CXMesh* mpBossBulletMesh;
 	CXMesh* mpNPCMesh;
+	CXMesh* mpCogWheelMesh;
 	Player* mpPlayer;
 	Enemy* mpEnemy;
 	vector<Enemy*> mEnemies;
@@ -35,6 +36,9 @@ class GameScene : public CScene
 	bool bossActive;
 	bool bossSpawnMinions;
 	NPC* mpNPC;
+	Item* mpCogWheel;
+	vector<Item*> mCog;
+	int cogAvailable;
 
 	ID3DXFont* gameFont;
 

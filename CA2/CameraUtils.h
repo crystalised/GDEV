@@ -18,6 +18,7 @@
 #include "Enemy.h" //Enemy
 #include "Boss.h" //Boss
 #include "Npc.h" //Npc
+#include "Item.h" //Item dropped by mobs
 
 class CameraUtils : public CCameraNode
 {

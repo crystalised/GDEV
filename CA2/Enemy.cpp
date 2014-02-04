@@ -119,7 +119,7 @@ void DrawEnemies(vector<Enemy*>& inEnemies)
 {
 	for (int i = (int)inEnemies.size() - 1; i >= 0; i--)
 	{
-		if (inEnemies[i]->IsAlive() == true)
+		if (inEnemies[i]->IsAlive())
 		{
 			inEnemies[i]->Draw();
 			DrawMeshNodes(inEnemies[i]->mBullets);
