@@ -5,11 +5,11 @@
 
 void GameScene::Enter()
 {
-	mpTerrain = new CTerrain(GetDevice(), "../media/Terrain/samplu.bmp", 5, 0.5);
+	mpTerrain = new CTerrain(GetDevice(), "../media/Terrain/map.bmp", 5, 0.5);
 	mpTerrain->GenerateTexture(D3DXVECTOR3(0.5f, 1, 0));
 	//Setup weather
 	mpWeather = new CPrecipitation();
-	mpWeather->Init(GetDevice(), "../media/Particle/snowball.bmp", D3DXVECTOR3(CParticleSystem::GetRandomFloat(.2f, .9f), -2, 0));
+	mpWeather->Init(GetDevice(), "../media/Particle/Snowflake.png", D3DXVECTOR3(CParticleSystem::GetRandomFloat(.2f, .9f), -2, 0));
 	// setup scene
 	SetupDefaultD3DOptions(GetDevice(), true);
 	// the models
@@ -303,7 +303,7 @@ void GameScene::CollisionCheck()
 			if (CollisionMeshNode(mpPlayer->mFlames[f], mpBoss))
 			{
 				mpPlayer->mFlames[f]->Destroy();
-				mpBoss->Damage(1);
+				mpBoss->Damage(mpPlayer->flameThrowerLvl);
 				mpPlayer->mFlameThrower->AddParticle(mpBoss->GetPos(), mpBoss->flameDirection); //Simulate boss on fire
 			}
 		}

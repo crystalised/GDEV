@@ -14,6 +14,8 @@ void HelpScene::Enter()
 	mpFont = CreateD3DFont(GetDevice(), "Arial", 24, true);
 	mpButtonTex[0] = LoadSpriteTex(GetDevice(), "../media/scene/Back1.png");
 	mpButtonTex[1] = LoadSpriteTex(GetDevice(), "../media/scene/Back2.png"); //Highlighted
+
+	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
 }
 void HelpScene::Update(float dt)
 {
@@ -23,6 +25,11 @@ void HelpScene::Update(float dt)
 	// WARNING: you cannot have two calls to KeyPress for the same key within a function
 	// the second call always gives false
 	// therefore one KeyPress with many tests within it
+	if (mpGamepad->IsGamepadConnected(0))
+	{
+		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_B))
+			ExitScene();
+	}
 	if (CGameWindow::KeyPress(VK_LBUTTON))
 	{
 		POINT mouse = CGameWindow::GetMousePos();

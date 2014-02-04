@@ -1,9 +1,11 @@
 #include "Scene.h"
 
-const POINT PLAY_BUT = { 50, 550 },
-HELP_BUT = { 400, 550 },
-CREDIT_BUT = { 750, 550 },
-EXIT_BUT = { 1100, 550 };
+const POINT PLAY_BUT = { 50, 525 },
+HELP_BUT = { 400, 525 },
+CREDIT_BUT = { 750, 525 },
+EXIT_BUT = { 1100, 525 };
+
+int mousePos;
 
 void MenuScene::Enter()
 {
@@ -20,39 +22,76 @@ void MenuScene::Enter()
 	mpButtonTex[6] = LoadSpriteTex(GetDevice(), "../media/Scene/Exit1.png");
 	mpButtonTex[7] = LoadSpriteTex(GetDevice(), "../media/Scene/Exit2.png"); //Highlighted
 	mpBGTex = LoadSpriteTex(GetDevice(), "../media/Scene/MainBG.png");
+
+	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
+	CGameWindow::SetMousePos(50, 525);
+	leftClick = false;
 }
 void MenuScene::Update(float dt)
 {
 	CScene::Update(dt);	// MUST CALL BASE CLASS'S Update
 	if (IsTopMost() == false)	return;	// Pause if I'm not the topmost screen
 
-	SetCursor(LoadCursor(NULL, IDC_ARROW));
+	if (mpGamepad->IsGamepadConnected(0))
+	{
+		ShowCursor(false);
+		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_DPAD_RIGHT))
+		{
+			if (CGameWindow::GetMousePos().x == 50)
+				CGameWindow::SetMousePos(400, 525);
+			else if (CGameWindow::GetMousePos().x == 400)
+				CGameWindow::SetMousePos(750, 525);
+			else if (CGameWindow::GetMousePos().x == 750)
+				CGameWindow::SetMousePos(1100, 525);
+			else
+				CGameWindow::SetMousePos(50, 525);
+		}
+		if (mpGamepad->IsButtonPressed2(0, XINPUT_GAMEPAD_DPAD_LEFT))
+		{
+			if (CGameWindow::GetMousePos().x == 50)
+				CGameWindow::SetMousePos(1100, 525);
+			else if (CGameWindow::GetMousePos().x == 1100)
+				CGameWindow::SetMousePos(750, 525);
+			else if (CGameWindow::GetMousePos().x == 750)
+				CGameWindow::SetMousePos(400, 525);
+			else
+				CGameWindow::SetMousePos(50, 525);
+		}
+		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_A))
+			leftClick = true;
+	}
+	else
+	{
+		ShowCursor(true);
+		SetCursor(LoadCursor(NULL, IDC_ARROW));
+	}
 
 	// you will need to detect the mouse clicks
-	// using InSprite() from SpriteUtils
-	// to go to a new scene you will need to 
-	// GetEngine()->AddScene(new TheSceneClass());
-	// you will also need to call ExitScene() when you want the menu to close
-	if (CGameWindow::KeyPress(VK_LBUTTON))
-	{
-		POINT mouse = CGameWindow::GetMousePos();
-		if (InSprite(mouse, PLAY_BUT, mpButtonTex[0]))	// clicked the PLAY button
+		// using InSprite() from SpriteUtils
+		// to go to a new scene you will need to 
+		// GetEngine()->AddScene(new TheSceneClass());
+		// you will also need to call ExitScene() when you want the menu to close
+		if (CGameWindow::KeyPress(VK_LBUTTON) || leftClick)
 		{
-			GetEngine()->AddScene(new GameScene);
+			POINT mouse = CGameWindow::GetMousePos();
+			if (InSprite(mouse, PLAY_BUT, mpButtonTex[0]))	// clicked the PLAY button
+			{
+				GetEngine()->AddScene(new GameScene);
+			}
+			else if (InSprite(mouse, HELP_BUT, mpButtonTex[1]))	// clicked the HELP button
+			{
+				GetEngine()->AddScene(new HelpScene);
+			}
+			else if (InSprite(mouse, CREDIT_BUT, mpButtonTex[2]))	// clicked the CREDIT button
+			{
+				GetEngine()->AddScene(new CreditScene);
+			}
+			else if (InSprite(mouse, EXIT_BUT, mpButtonTex[3]))	// clicked the EXIT button
+			{
+				ExitScene();
+			}
+			leftClick = false;
 		}
-		else if (InSprite(mouse, HELP_BUT, mpButtonTex[1]))	// clicked the HELP button
-		{
-			GetEngine()->AddScene(new HelpScene);
-		}
-		else if (InSprite(mouse, CREDIT_BUT, mpButtonTex[2]))	// clicked the CREDIT button
-		{
-			GetEngine()->AddScene(new CreditScene);
-		}
-		else if (InSprite(mouse, EXIT_BUT, mpButtonTex[3]))	// clicked the EXIT button
-		{
-			ExitScene();
-		}
-	}
 
 }
 void MenuScene::Draw(float dt)

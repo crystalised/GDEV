@@ -383,7 +383,7 @@ bool CPrecipitation::Init( IDirect3DDevice9* inDevice, char* inTextureFilename,D
 	settings.SourceBlend = D3DBLEND_SRCALPHA;
 	settings.DestBlend = D3DBLEND_SRCALPHA;
 	settings.MaxParticles = 500;
-	settings.Size = 0.1f;
+	settings.Size = 0.05f;
 	settings.StartColor = D3DCOLOR_XRGB(255, 255, 255);
 	//TODO(CPrecipitation::Init, needs some parameters)
 	return CParticleSystem::Init(inDevice,inTextureFilename,settings);

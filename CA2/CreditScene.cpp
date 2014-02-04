@@ -15,11 +15,19 @@ void CreditScene::Enter()
 	mpFont = CreateD3DFont(GetDevice(), "Arial", 24, true);
 	mpButtonTex[0] = LoadSpriteTex(GetDevice(), "../media/scene/Back1.png");
 	mpButtonTex[1] = LoadSpriteTex(GetDevice(), "../media/scene/Back2.png");
+
+	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
 }
 void CreditScene::Update(float dt)
 {
 	CScene::Update(dt);	// MUST CALL BASE CLASS'S Update
 	if (IsTopMost() == false)	return;	// Pause if I'm not the topmost screen
+
+	if (mpGamepad->IsGamepadConnected(0))
+	{
+		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_B))
+			ExitScene();
+	}
 
 	// WARNING: you cannot have two calls to KeyPress for the same key within a function
 	// the second call always gives false

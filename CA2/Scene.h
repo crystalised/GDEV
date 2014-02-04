@@ -3,6 +3,10 @@
 
 static int cogAvailable;
 
+//Gamepad
+static CGamepadComponent* mpGamepad;
+static bool leftClick;
+
 class MenuScene : public CScene
 {
 public:

@@ -13,6 +13,8 @@ CGamepadComponent::CGamepadComponent() :
 	// TODO: Init state
 	//...
 	ZeroMemory(g_Controllers, sizeof(CONTROLLER_STATE)* MAX_CONTROLLERS);
+	buttonCurrState = false;
+	buttonPrevState = false;
 }
 
 void CGamepadComponent::Startup()
@@ -78,11 +80,25 @@ bool CGamepadComponent::IsButtonDown(int gamepadID, int buttonId)
 
 bool CGamepadComponent::IsButtonPressed(int gamepadID, int buttonId)
 {
+	buttonPrevState = buttonCurrState;
 	if (!IsButtonDown(gamepadID, buttonId))
-		buttonDown = false;
-	if (IsButtonDown(gamepadID, buttonId) && buttonDown == false)
+		buttonCurrState = false;
+	else
+		buttonCurrState = true;
+	if (buttonPrevState == false && buttonCurrState == true)
+		return true;
+	else
+		return false;
+}
+
+bool CGamepadComponent::IsButtonPressed2(int gamepadID, int buttonId)
+{
+	if (!IsButtonDown(gamepadID, buttonId))
+		buttonDown2 = false;
+
+	if (IsButtonDown(gamepadID, buttonId) && buttonDown2 == false)
 	{
-		buttonDown = true;
+		buttonDown2 = true;
 		return true;
 	}
 	else

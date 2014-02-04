@@ -113,9 +113,9 @@ void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBom
 	mBombExplode = new CExplosion();
 	mBombExplode->Init(inDevice, "../media/Particle/spark.bmp");
 
-	settings.LifeTime = 0.15f;
+	settings.LifeTime = 0.5f;
 	settings.StartColor = D3DCOLOR_XRGB(255, 141, 29);
-	settings.Size = 0.2;
+	settings.Size = 0.15;
 
 	mBombTrail = new CParticleSystem();
 	mBombTrail->Init(inDevice, "../media/Particle/flare.bmp", settings);
@@ -154,7 +154,9 @@ void Player::UpdateWeapon(float dt)
 
 	for (int i = 0; i < mBombs.size(); i++)
 	{
-		mBombTrail->AddParticle(mBombs[i]->GetPos(), D3DXVECTOR3(0, 0, 0));
+		D3DXVECTOR3 vel = mPlayer.RotateVector(D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 0.2f, 1.0f));
+		vel *= -50;
+		mBombTrail->AddParticle(mBombs[i]->GetPos(), vel);
 	}
 
 	mFlameThrower->Update(dt);
@@ -169,7 +171,7 @@ void Player::Jump()
 	CGameWindow::ClearKeyPress();
 	if (playerState == STANDING)
 	{
-		jumpHeight = mPlayer.GetPos().y + 3;
+		jumpHeight = mPlayer.GetPos().y + 6;
 		playerState = JUMPING;
 	}
 }
