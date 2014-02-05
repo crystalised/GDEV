@@ -43,7 +43,7 @@ void CameraUtils::ChangeCameraMode(CCameraNode& cam, CNode& tgt)
 	case 0:	// tracking
 		//TODO("set the camera's location");
 		//TODO("make the camera look at the player");
-		CameraUtils::TrackingCamera(cam, D3DXVECTOR3(0, 100, -5), tgt.GetPos());
+		CameraUtils::TrackingCamera(cam, D3DXVECTOR3(0, 200, -5), tgt.GetPos());
 		break;
 	case 1: // first person
 		cam.SetNearFar(0.1f, 10000.0f);

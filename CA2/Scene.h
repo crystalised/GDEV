@@ -3,6 +3,10 @@
 
 static int cogAvailable;
 
+//Graphics
+static ID3DXFont* mpFont;
+static IDirect3DTexture9* mpButtonB;
+
 //Gamepad
 static CGamepadComponent* mpGamepad;
 static bool leftClick;
@@ -35,6 +39,7 @@ class GameScene : public CScene
 	CXMesh* mpBossBulletMesh;
 	CXMesh* mpNPCMesh;
 	CXMesh* mpCogWheelMesh;
+	CXMesh* mpWeaponMesh;
 	Player* mpPlayer;
 	int maxEnemies;
 	Enemy* mpEnemy;
@@ -60,6 +65,7 @@ public:
 private:
 	void CollisionCheck();
 	void TalkToNpc();
+	void HandleInput(float dt);
 };
 
 class HelpScene : public CScene
@@ -72,7 +78,8 @@ public:
 
 private:
 	IDirect3DTexture9* mpButtonTex[2];
-	ID3DXFont* mpFont;
+	IDirect3DTexture9* mpBG1;
+	IDirect3DTexture9* mpBG2;
 };
 
 class CreditScene : public CScene
@@ -84,8 +91,8 @@ public:
 	void Leave();
 
 private:
+	IDirect3DTexture9* mpBG;
 	IDirect3DTexture9* mpButtonTex[2];
-	ID3DXFont* mpFont;
 };
 
 class DeathScene : public CScene
@@ -97,7 +104,7 @@ public:
 	void Leave();
 private:
 	IDirect3DTexture9* mpButtonTex[2];
-	ID3DXFont* mpFont;
+	IDirect3DTexture9* mpBG;
 };
 
 class VictoryScene : public CScene
@@ -109,7 +116,7 @@ public:
 	void Leave();
 private:
 	IDirect3DTexture9* mpButtonTex[2];
-	ID3DXFont* mpFont;
+	IDirect3DTexture9* mpBG;
 };
 
 class NPCScene : public CScene
@@ -123,5 +130,4 @@ public:
 private:
 	IDirect3DTexture9* mpBackground;
 	IDirect3DTexture9* mpButtonTex[2];
-	ID3DXFont* mpFont;
 };

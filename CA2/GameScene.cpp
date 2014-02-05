@@ -6,7 +6,7 @@
 void GameScene::Enter()
 {
 	mpTerrain = new CTerrain(GetDevice(), "../media/Terrain/map.bmp", 5, 0.5);
-	mpTerrain->GenerateTexture(D3DXVECTOR3(0.5f, 1, 0));
+	mpTerrain->GenerateTexture(D3DXVECTOR3(0, 1, 0));
 	//Setup weather
 	mpWeather = new CPrecipitation();
 	mpWeather->Init(GetDevice(), "../media/Particle/Snowflake.png", D3DXVECTOR3(CParticleSystem::GetRandomFloat(.2f, .9f), -2, 0));
@@ -22,11 +22,12 @@ void GameScene::Enter()
 	mpBossBulletMesh = new CXMesh(GetDevice(), "../media/Model/Bullet.x");
 	mpNPCMesh = new CXMesh(GetDevice(), "../media/Model/NPC.x");
 	mpCogWheelMesh = new CXMesh(GetDevice(), "../media/Model/Gear.x");
+	mpWeaponMesh = new CXMesh(GetDevice(), "../media/Model/FlameThrower.x");
 	mpCrossHair = LoadSpriteTex(GetDevice(), "../media/crosshair.png");
 
 	//Setup player and camera
-	mpPlayer = new Player(mpPlayerMesh, mpTerrain, GetEngine());
-	mpPlayer->Init(GetDevice(), mpFlameMesh, mpRocketMesh);
+	mpPlayer = new Player(mpPlayerMesh, mpTerrain);
+	mpPlayer->Init(GetDevice(), mpFlameMesh, mpRocketMesh, mpWeaponMesh);
 	mpPlayer->mPlayer.SetHpr(mCamera.GetHpr());
 	mCamera.mMode = 1;
 	cogAvailable = 0;
@@ -59,7 +60,7 @@ void GameScene::Enter()
 	//Setup NPC
 	mpNPC = new NPC();
 	mpNPC->Init(mpNPCMesh);
-	mpNPC->SetPos(mpTerrain->GetPointOnGround(mpPlayer->GetPos() + D3DXVECTOR3(10, 0, 0)));
+	mpNPC->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(66.0f, mpTerrain->GetHeight(66.0f, 498.0f), 498.0f)));
 
 	gameFont = CreateD3DFont(GetDevice(), "Segoe UI", 24, false);
 }
@@ -71,30 +72,10 @@ void GameScene::Update(float dt)
 	if (IsTopMost() == false) //Pause scene if not top most
 		return;
 
-	if (CGameWindow::KeyPress(VK_F10))
-		ExitScene();
-
-	if (CGameWindow::KeyPress(VK_F8))
-		bossActive = !bossActive;
-
-	if (CGameWindow::KeyPress(VK_F7))
-		bossSpawnMinions = true;
-	if (mpGamepad->IsGamepadConnected(0))
-	{
-		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_Y))
-		{
-			TalkToNpc();
-		}
-	}
-	else
-	{
-		if (CGameWindow::KeyPress('Q'))
-			TalkToNpc();
-	}
-
 	//Player
 	mpPlayer->Update(dt);
 	mpPlayer->UpdateWeapon(dt);
+	HandleInput(dt);
 	if (mpPlayer->mPlayer.mLife <= 0) //show death scene when player is dead
 	{
 		ExitScene();
@@ -245,6 +226,7 @@ void GameScene::Leave()
 	SAFE_DELETE(mpNPCMesh);
 	SAFE_DELETE(mpNPC);
 	SAFE_DELETE(mpCogWheelMesh);
+	SAFE_DELETE(mpWeaponMesh);
 
 	//Delete all enemies
 	for (int i = (int)mEnemies.size() - 1; i >= 0; i--)
@@ -376,4 +358,84 @@ void GameScene::TalkToNpc()
 	{
 		GetEngine()->AddScene(new NPCScene());
 	}
+}
+
+void GameScene::HandleInput(float dt)
+{
+	//Player
+	D3DXVECTOR3 move; //Player move vector
+	D3DXVECTOR3 turn = D3DXVECTOR3(0.f, 0.f, 0.f); //Turn vector
+
+	//Debug
+	if (CGameWindow::KeyPress(VK_F10))
+		ExitScene();
+
+	if (CGameWindow::KeyPress(VK_F8))
+		bossActive = !bossActive;
+
+	if (CGameWindow::KeyPress(VK_F7))
+		bossSpawnMinions = true;
+
+	if (mpGamepad->IsGamepadConnected(0))
+	{
+		move = mpGamepad->GetVector(0, LEFT_X, NONE, LEFT_Y);
+		turn = mpGamepad->GetVector(0, RIGHT_Y_INV, RIGHT_X, NONE) / 5; //reduce sensitivity
+		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_A))
+			mpPlayer->Jump();
+		if (mpGamepad->GetLeftTrigger(0) > 0)
+			mpPlayer->SPEED = 50.0f;
+		else
+			mpPlayer->SPEED = 10.0f;
+
+		if (mpGamepad->GetRightTrigger(0) > 0)
+		{
+			mpPlayer->Shoot();
+		}
+		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_LEFT_SHOULDER))
+		{
+			if (mpPlayer->currentWeapon == 1)
+				mpPlayer->currentWeapon = 2;
+			else if (mpPlayer->currentWeapon == 2)
+				mpPlayer->currentWeapon = 1;
+		}
+
+		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_Y))
+		{
+			TalkToNpc();
+		}
+	}
+	else
+	{
+		move = GetKeyboardVector(WSAD_KEYS);
+		turn = GetMouseTurnVector(100, true);
+
+		if (CGameWindow::KeyPress(VK_SPACE))
+		{
+			mpPlayer->Jump();
+		}
+
+		if (CGameWindow::KeyPress('1'))
+		{
+			mpPlayer->ChangeWeapon(1);
+		}
+		else if (CGameWindow::KeyPress('2'))
+		{
+			mpPlayer->ChangeWeapon(2);
+		}
+		if (CGameWindow::KeyDown(VK_LBUTTON))
+		{
+			mpPlayer->Shoot();
+		}
+		if (CGameWindow::KeyPress('Q'))
+			TalkToNpc();
+	}
+
+	mpPlayer->mPlayer.Move(move * dt * mpPlayer->SPEED);
+	mpPlayer->mPlayer.Turn(turn * dt * mpPlayer->turn);
+
+	//Limit player from looking past straight up or down
+	float limit = (float)(M_PI / 2) - 0.01f;
+
+	mpPlayer->mPlayer.mHpr.x = (float)__max(-limit, mpPlayer->mPlayer.mHpr.x);
+	mpPlayer->mPlayer.mHpr.x = (float)__min(+limit, mpPlayer->mPlayer.mHpr.x);
 }

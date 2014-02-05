@@ -14,6 +14,9 @@ void HelpScene::Enter()
 	mpFont = CreateD3DFont(GetDevice(), "Arial", 24, true);
 	mpButtonTex[0] = LoadSpriteTex(GetDevice(), "../media/scene/Back1.png");
 	mpButtonTex[1] = LoadSpriteTex(GetDevice(), "../media/scene/Back2.png"); //Highlighted
+	mpBG1 = LoadSpriteTex(GetDevice(), "../media/scene/HelpController.png"); //Gamepad
+	mpBG2 = LoadSpriteTex(GetDevice(), "../media/scene/HelpKeyboard.png"); //Keyboard & mouse
+	mpButtonB = LoadSpriteTex(GetDevice(), "../media/scene/ButtonB.png"); //B button
 
 	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
 }
@@ -47,29 +50,27 @@ void HelpScene::Draw(float dt)
 	GetSprite()->Begin(D3DXSPRITE_ALPHABLEND);
 	// you can draw fonts with scaling & other effects using DrawD3DFontEx
 	// but it must have a spitebatch set with D3DXSPRITE_ALPHABLEND
-	DrawD3DFontEx(mpFont, GetSprite(), "Instructions", D3DXVECTOR2(100, 0),
-		EMERALD_COL, D3DXVECTOR2(0, 0), 2.0f);
 
-	DrawD3DFontEx(mpFont, GetSprite(), "Controls", D3DXVECTOR2(100, 50),
-		EMERALD_COL, D3DXVECTOR2(0, 0), 1.5f);
-
-	DrawD3DFontEx(mpFont, GetSprite(), "WASD - Move Player \nMouse - Move view (in first/third person view) \nLeft Click - Shoot \nF1-F5 - Switch views(Tracking, First Person, Third Person, Overhead Fixed, Top)", D3DXVECTOR2(100, 100),
-		YELLOW_COL, D3DXVECTOR2(0, 0), 1.0f);
-
-	DrawD3DFontEx(mpFont, GetSprite(), "Objectives", D3DXVECTOR2(100, 250),
-		EMERALD_COL, D3DXVECTOR2(0, 0), 1.5f);
-
-	DrawD3DFontEx(mpFont, GetSprite(), "Collect all the diamonds while navigating through the\nmaze before the time runs out!", D3DXVECTOR2(100, 300),
-		YELLOW_COL, D3DXVECTOR2(0, 0), 1.0f);
-
-	POINT mouse = CGameWindow::GetMousePos();
-	if (InSprite(mouse, BACK_BUT, mpButtonTex[0])) //Highlighted the back button
+	//Gamepad connected
+	if (mpGamepad->IsGamepadConnected(0))
 	{
-		DrawSprite(GetSprite(), mpButtonTex[1], BACK_BUT);
+		DrawSprite(GetSprite(), mpBG1, GetEngine()->GetWindowRect());
+		DrawSprite(GetSprite(), mpButtonB, BACK_BUT.x - 100, BACK_BUT.y + 30);
+		DrawD3DFontEx(mpFont, GetSprite(), "Back", D3DXVECTOR2(BACK_BUT.x, BACK_BUT.y + 50),
+			RED_COL, D3DXVECTOR2(0, 0), 1.5f);
 	}
 	else
 	{
-		DrawSprite(GetSprite(), mpButtonTex[0], BACK_BUT);
+		DrawSprite(GetSprite(), mpBG2, GetEngine()->GetWindowRect());
+		POINT mouse = CGameWindow::GetMousePos();
+		if (InSprite(mouse, BACK_BUT, mpButtonTex[0])) //Highlighted the back button
+		{
+			DrawSprite(GetSprite(), mpButtonTex[1], BACK_BUT);
+		}
+		else
+		{
+			DrawSprite(GetSprite(), mpButtonTex[0], BACK_BUT);
+		}
 	}
 
 	GetSprite()->End();

@@ -28,7 +28,7 @@ public:
 	//Boss weapon
 	CXMesh* mBulletMesh; //Model for Bullet
 	vector<CMeshNode*> mBullets; //Vector for bullet node
-	const int gun_CD = 1000;
+	int gun_CD = 1000;
 	clock_t gun_used_time;
 
 	const float groundOffset = 0; //Offset for boss from ground

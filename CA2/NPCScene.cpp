@@ -39,15 +39,11 @@ void NPCScene::Update(float dt)
 }
 void NPCScene::Draw(float dt)
 {
-	//GetDevice()->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, , 1.0f, 0);
 	GetDevice()->BeginScene();
 
-	RECT window = { 360, 180, 920, 540 };
+	RECT window = GetEngine()->GetWindowRect();
 
 	GetSprite()->Begin(D3DXSPRITE_ALPHABLEND);
-
-	RECT r = GetEngine()->GetWindowRect();
-	D3DCOLOR inactive = WHITE_COL*0.5f;
 
 	DrawSprite(GetSprite(), mpBackground, window);
 
@@ -65,79 +61,9 @@ void NPCScene::Draw(float dt)
 	}
 
 	GetSprite()->End();
-
-	//DrawTransitionFade();	// fade, just add it before the EndScene
 	GetDevice()->EndScene();
 	// note: no need to call Present, that is done in the CSceneEngine
 }
-
-//void ::Draw(float dt)
-//{
-//	GetDevice()->BeginScene();
-//	GetSprite()->Begin(D3DXSPRITE_ALPHABLEND);
-//
-//	POINT mouse = CGameWindow::GetMousePos();
-//
-//	RECT r = GetEngine()->GetWindowRect();
-//	D3DCOLOR inactive = WHITE_COL*0.5f;
-//
-//	if (inAdvice)
-//	{
-//		DrawSprite(GetSprite(), mpQuestTex[1], r);
-//
-//		if (InSprite(mouse, CANCEL_BUT, mpButtonTex[5]))
-//			DrawSprite(GetSprite(), mpButtonTex[5], CANCEL_BUT);
-//		else
-//			DrawSprite(GetSprite(), mpButtonTex[5], CANCEL_BUT, inactive);
-//	}
-//	else if (inQuest)
-//	{
-//		DrawSprite(GetSprite(), mpQuestTex[2], r);
-//
-//		if (!questCompleted)
-//		{
-//			if (InSprite(mouse, ACCEPT_BUT, mpButtonTex[4]))
-//				DrawSprite(GetSprite(), mpButtonTex[4], ACCEPT_BUT);
-//			else
-//				DrawSprite(GetSprite(), mpButtonTex[4], ACCEPT_BUT, inactive);
-//		}
-//
-//		if (InSprite(mouse, CANCEL_BUT, mpButtonTex[5]))
-//			DrawSprite(GetSprite(), mpButtonTex[5], CANCEL_BUT);
-//		else
-//			DrawSprite(GetSprite(), mpButtonTex[5], CANCEL_BUT, inactive);
-//	}
-//	else
-//	{
-//		DrawSprite(GetSprite(), mpQuestTex[0], r);
-//
-//		if (InSprite(mouse, ADVISE_BUT, mpButtonTex[0]))
-//			DrawSprite(GetSprite(), mpButtonTex[0], ADVISE_BUT);
-//		else
-//			DrawSprite(GetSprite(), mpButtonTex[0], ADVISE_BUT, inactive);
-//
-//		if (InSprite(mouse, QUEST_BUT, mpButtonTex[1]))
-//			DrawSprite(GetSprite(), mpButtonTex[1], QUEST_BUT);
-//		else
-//			DrawSprite(GetSprite(), mpButtonTex[1], QUEST_BUT, inactive);
-//
-//		if (InSprite(mouse, SHOP_BUT, mpButtonTex[2]))
-//			DrawSprite(GetSprite(), mpButtonTex[2], SHOP_BUT);
-//		else
-//			DrawSprite(GetSprite(), mpButtonTex[2], SHOP_BUT, inactive);
-//
-//		if (InSprite(mouse, LEAVE_BUT, mpButtonTex[3]))
-//			DrawSprite(GetSprite(), mpButtonTex[3], LEAVE_BUT);
-//		else
-//			DrawSprite(GetSprite(), mpButtonTex[3], LEAVE_BUT, inactive);
-//	}
-//
-//	if (useMouse)
-//		DrawSprite(GetSprite(), mpCursorTex, mouse, WHITE_COL);
-//
-//	GetSprite()->End();
-//	GetDevice()->EndScene();
-//}
 
 void NPCScene::Leave()
 {

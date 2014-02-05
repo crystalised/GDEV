@@ -64,8 +64,9 @@ void Boss::Update(float dt, CMeshNode* inPlayer)
 				shot->mScale = 0.5f;
 				shot->mLife = 3000;
 				mBullets.push_back(shot);
-				if (mLife <= 900)
+				if (mLife <= 500)
 				{
+					gun_CD = 700;
 					FORWARD = D3DXVECTOR3(CParticleSystem::GetRandomFloat(0.2, 0.5), 0, 1);
 					D3DXVECTOR3 vel2 = RotateVector(FORWARD);
 					vel2 *= 25;

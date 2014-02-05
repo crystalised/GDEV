@@ -15,6 +15,8 @@ void CreditScene::Enter()
 	mpFont = CreateD3DFont(GetDevice(), "Arial", 24, true);
 	mpButtonTex[0] = LoadSpriteTex(GetDevice(), "../media/scene/Back1.png");
 	mpButtonTex[1] = LoadSpriteTex(GetDevice(), "../media/scene/Back2.png");
+	mpBG = LoadSpriteTex(GetDevice(), "../media/scene/Credits.png");
+	mpButtonB = LoadSpriteTex(GetDevice(), "../media/scene/ButtonB.png");
 
 	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
 }
@@ -49,20 +51,26 @@ void CreditScene::Draw(float dt)
 	GetSprite()->Begin(D3DXSPRITE_ALPHABLEND);
 	// you can draw fonts with scaling & other effects using DrawD3DFontEx
 	// but it must have a spitebatch set with D3DXSPRITE_ALPHABLEND
-	DrawD3DFontEx(mpFont, GetSprite(), "Credits", D3DXVECTOR2(100, 0),
-		ORANGE_COL, D3DXVECTOR2(0, 0), 2.0f);
+	DrawSprite(GetSprite(), mpBG, GetEngine()->GetWindowRect());
 
-	DrawD3DFontEx(mpFont, GetSprite(), "Creator - ", D3DXVECTOR2(100, 100),
-		GOLD_COL, D3DXVECTOR2(0, 0), 1.0f);
-
-	POINT mouse = CGameWindow::GetMousePos();
-	if (InSprite(mouse, BACK_BUT, mpButtonTex[0])) //Highlighted the back button
+	//Gamepad connected
+	if (mpGamepad->IsGamepadConnected(0))
 	{
-		DrawSprite(GetSprite(), mpButtonTex[1], BACK_BUT);
+		DrawSprite(GetSprite(), mpButtonB, BACK_BUT.x - 100, BACK_BUT.y + 30);
+		DrawD3DFontEx(mpFont, GetSprite(), "Back", D3DXVECTOR2(BACK_BUT.x, BACK_BUT.y + 50),
+			RED_COL, D3DXVECTOR2(0, 0), 1.5f);
 	}
 	else
 	{
-		DrawSprite(GetSprite(), mpButtonTex[0], BACK_BUT);
+		POINT mouse = CGameWindow::GetMousePos();
+		if (InSprite(mouse, BACK_BUT, mpButtonTex[0])) //Highlighted the back button
+		{
+			DrawSprite(GetSprite(), mpButtonTex[1], BACK_BUT);
+		}
+		else
+		{
+			DrawSprite(GetSprite(), mpButtonTex[0], BACK_BUT);
+		}
 	}
 
 	GetSprite()->End();

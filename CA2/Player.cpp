@@ -1,17 +1,14 @@
 #include "Player.h"
 
-Player::Player(CXMesh* inPlayerMesh, CTerrain* inTerrain, CSceneEngine* inEngine) //Input player mesh and terrain, init player
+Player::Player(CXMesh* inPlayerMesh, CTerrain* inTerrain) //Input player mesh and terrain, init player
 {
 	mTerrain = inTerrain;
 	mPlayer.Init(inPlayerMesh);
-	mPlayer.SetPos(mTerrain->GetPointOnGround(mPlayer.GetPos(), groundOffset));
+	mPlayer.SetPos(D3DXVECTOR3(70.0f, mTerrain->GetHeight(70.0f, 464.0f), 464.0f));
 	mPlayer.mLife = 100;
 	playerState = STANDING; //Player default state is standing
 	currentWeapon = 1; //Player default weapon is flame thrower(1)
 	rocket_used_time = 0;
-
-	//Init gamepad
-	mpGamepad = inEngine->FindComponent<CGamepadComponent>();
 }
 
 Player::~Player()
@@ -25,47 +22,11 @@ Player::~Player()
 
 void Player::Update(float dt) //Update player based on input
 {
-	D3DXVECTOR3 move; //Player move vector
-	D3DXVECTOR3 turnCam = D3DXVECTOR3(0.f, 0.f, 0.f); //Turn cam vector
-	if (mpGamepad->IsGamepadConnected(0))
+	mWeapon.mPos = mPlayer.OffsetPos(D3DXVECTOR3(0, 0.4f, 0));
+	if (mPlayer.GetPos().y < 25.0f)
 	{
-		move = mpGamepad->GetVector(0, LEFT_X, NONE, LEFT_Y);
-		turnCam = mpGamepad->GetVector(0, RIGHT_Y_INV, RIGHT_X, NONE) / 5; //reduce sensitivity
-		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_A))
-			Jump();
-		if (mpGamepad->GetLeftTrigger(0) > 0)
-			SPEED = 50.0f;
-		else
-			SPEED = 10.0f;
+		mPlayer.mLife = 0;
 	}
-	else
-	{
-		move = GetKeyboardVector(WSAD_KEYS);
-		turnCam = GetMouseTurnVector(100, true);
-
-		if (CGameWindow::KeyPress(VK_SPACE))
-		{
-			Jump();
-		}
-
-		if (CGameWindow::KeyPress('1'))
-		{
-			ChangeWeapon(1);
-		}
-		else if (CGameWindow::KeyPress('2'))
-		{
-			ChangeWeapon(2);
-		}
-	}
-
-	mPlayer.Move(move * dt * SPEED);
-	mPlayer.Turn(turnCam * dt * turn);
-
-	//Limit player from looking past straight up or down
-	float limit = (float)(M_PI / 2) - 0.01f;
-
-	mPlayer.mHpr.x = (float)__max(-limit, mPlayer.mHpr.x);
-	mPlayer.mHpr.x = (float)__min(+limit, mPlayer.mHpr.x);
 
 	switch (playerState)
 	{
@@ -93,9 +54,10 @@ void Player::Draw()
 	mRocketExplode->Draw(IDENTITY_MAT);
 	//DrawMeshNodes(mFlames);
 	mRocketTrail->Draw(IDENTITY_MAT);
+	mWeapon.Draw();
 }
 
-void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBombMesh)
+void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBombMesh, CXMesh* inWeaponMesh)
 {
 	mFlameMesh = inFlameMesh;
 
@@ -123,6 +85,9 @@ void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBom
 
 	mRocketTrail = new CParticleSystem();
 	mRocketTrail->Init(inDevice, "../media/Particle/flare.bmp", settings);
+
+	mWeapon.Init(inWeaponMesh, mPlayer.OffsetPos(D3DXVECTOR3(-0.07f, 0.8f, 0.5f)));
+	mWeapon.SetHpr(D3DXVECTOR3(0, 280, 0));
 }
 
 void Player::ChangeWeapon(int inW)
@@ -134,28 +99,6 @@ void Player::ChangeWeapon(int inW)
 
 void Player::UpdateWeapon(float dt)
 {
-	if (mpGamepad->IsGamepadConnected(0))
-	{
-		if (mpGamepad->GetRightTrigger(0) > 0)
-		{
-			Shoot();
-		}
-		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_LEFT_SHOULDER))
-		{
-			if (currentWeapon == 1)
-				currentWeapon = 2;
-			else if (currentWeapon == 2)
-				currentWeapon = 1;
-		}
-	}
-	else
-	{
-		if (CGameWindow::KeyDown(VK_LBUTTON))
-		{
-			Shoot();
-		}
-	}
-
 	for (int i = 0; i < mRockets.size(); i++)
 	{
 		D3DXVECTOR3 vel = mPlayer.RotateVector(D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 0.2f, 1.0f));
@@ -197,13 +140,13 @@ void Player::Shoot()
 		// this is the direction the player is facing
 		// setup the shot starting at player location & direction
 		shot->Init(mFlameMesh, mPlayer.GetPos(), mPlayer.GetHpr());
-		shot->mPos = mPlayer.GetPos() + D3DXVECTOR3(-0.2f, -0.2f, 0);
+		shot->mPos = mPlayer.GetPos() + D3DXVECTOR3(0, 0.3f, 0);
 		shot->mVel = vel;
 		shot->mScale = 0.5f;	// small
 		shot->mLife = 50; //Short life
 		mFlames.push_back(shot);	// add to vector
 
-		mFlameThrower->AddParticle(mPlayer.GetPos() + D3DXVECTOR3(-0.2f, -0.2f, 0), vel); //Spawnpoint of particles
+		mFlameThrower->AddParticle(mPlayer.GetPos() + D3DXVECTOR3(0, 0.3f, 0), vel); //Spawnpoint of particles
 		break;
 	}
 	case 2:

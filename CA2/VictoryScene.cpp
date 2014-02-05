@@ -15,6 +15,10 @@ void VictoryScene::Enter()
 	mpFont = CreateD3DFont(GetDevice(), "Arial", 24, true);
 	mpButtonTex[0] = LoadSpriteTex(GetDevice(), "../media/Scene/Exit1.png");
 	mpButtonTex[1] = LoadSpriteTex(GetDevice(), "../media/Scene/Exit2.png");
+	mpBG = LoadSpriteTex(GetDevice(), "../media/scene/Win.png"); //Win background
+	mpButtonB = LoadSpriteTex(GetDevice(), "../media/scene/ButtonB.png"); //B button
+
+	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
 }
 void VictoryScene::Update(float dt)
 {
@@ -24,12 +28,20 @@ void VictoryScene::Update(float dt)
 	// WARNING: you cannot have two calls to KeyPress for the same key within a function
 	// the second call always gives false
 	// therefore one KeyPress with many tests within it
-	if (CGameWindow::KeyPress(VK_LBUTTON))
+	if (mpGamepad->IsGamepadConnected(0))
 	{
-		POINT mouse = CGameWindow::GetMousePos();
-		if (InSprite(mouse, MENU_BUT, mpButtonTex[0]))	// clicked the menu button
-		{
+		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_B))
 			ExitScene();
+	}
+	else
+	{
+		if (CGameWindow::KeyPress(VK_LBUTTON))
+		{
+			POINT mouse = CGameWindow::GetMousePos();
+			if (InSprite(mouse, MENU_BUT, mpButtonTex[0]))	// clicked the menu button
+			{
+				ExitScene();
+			}
 		}
 	}
 }
@@ -42,20 +54,25 @@ void VictoryScene::Draw(float dt)
 	// you can draw fonts with scaling & other effects using DrawD3DFontEx
 	// but it must have a spitebatch set with D3DXSPRITE_ALPHABLEND
 
-	std::stringstream gameOverText;
+	DrawSprite(GetSprite(), mpBG, GetEngine()->GetWindowRect());
 
-	gameOverText << "Game Over!! \n" << "You Win!!";
-
-	DrawD3DFont(mpFont, gameOverText.str(), 530, 300, ORANGE_COL);
-
-	POINT mouse = CGameWindow::GetMousePos();
-	if (InSprite(mouse, MENU_BUT, mpButtonTex[0])) //Highlighted the back button
+	if (mpGamepad->IsGamepadConnected(0))
 	{
-		DrawSprite(GetSprite(), mpButtonTex[1], MENU_BUT);
+		DrawSprite(GetSprite(), mpButtonB, MENU_BUT.x - 100, MENU_BUT.y + 30);
+		DrawD3DFontEx(mpFont, GetSprite(), "Menu", D3DXVECTOR2(MENU_BUT.x, MENU_BUT.y + 50),
+			RED_COL, D3DXVECTOR2(0, 0), 1.5f);
 	}
 	else
 	{
-		DrawSprite(GetSprite(), mpButtonTex[0], MENU_BUT);
+		POINT mouse = CGameWindow::GetMousePos();
+		if (InSprite(mouse, MENU_BUT, mpButtonTex[0])) //Highlighted the back button
+		{
+			DrawSprite(GetSprite(), mpButtonTex[1], MENU_BUT);
+		}
+		else
+		{
+			DrawSprite(GetSprite(), mpButtonTex[0], MENU_BUT);
+		}
 	}
 
 	GetSprite()->End();

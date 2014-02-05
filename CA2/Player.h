@@ -34,8 +34,7 @@ public:
 	const int rocket_CD = 3000;
 	clock_t rocket_used_time;
 	CExplosion* mRocketExplode;
-	//Gamepad
-	CGamepadComponent* mpGamepad;
+	CMeshNode mWeapon;
 	
 	int currentWeapon;
 
@@ -50,11 +49,11 @@ public:
 	D3DXVECTOR3 gravity = D3DXVECTOR3(0, 9.81f, 0);
 
 public:
-	Player(CXMesh* inPlayerMesh, CTerrain* inTerrain, CSceneEngine* inEngine); //input player mesh and terrain to initialze player
+	Player(CXMesh* inPlayerMesh, CTerrain* inTerrain); //input player mesh and terrain to initialze player
 	~Player();
 	void Update(float dt);
 	void Draw();
-	void Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inRocketMesh);
+	void Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inRocketMesh, CXMesh* inWeaponMesh);
 	void ChangeWeapon(int inW);
 	void UpdateWeapon(float dt);
 	void Jump();
