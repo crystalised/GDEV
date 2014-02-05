@@ -18,8 +18,8 @@ class Boss : public CMeshNode
 {
 	// AI
 	enum STATE { IDLING, CHASING, ATTACKING };
-	static const int ATTACK_RANGE = 15; //Boss attack range
-	static const int DETECTION_RANGE = 20; //Boss detection of player range
+	static const int ATTACK_RANGE = 25; //Boss attack range
+	static const int DETECTION_RANGE = 50; //Boss detection of player range
 	const float SPEED = 6.0f; //Speed of boss movement
 	const float TURN = 3.0f; //Speed of boss turn
 

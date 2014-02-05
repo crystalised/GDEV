@@ -426,7 +426,7 @@ void GameScene::HandleInput(float dt)
 			TalkToNpc();
 		}
 
-		if (mpGamepad->IsButtonPressed2(0, XINPUT_GAMEPAD_START  && mpNPC->inQuest))
+		if (mpGamepad->IsButtonPressed2(0, XINPUT_GAMEPAD_START  && inQuest))
 		{
 			if (clock() - tele_used_time > tele_CD)
 			{
@@ -465,7 +465,7 @@ void GameScene::HandleInput(float dt)
 			TalkToNpc();
 		if (CGameWindow::KeyPress('Y'))
 		{
-			if (clock() - tele_used_time > tele_CD && mpNPC->inQuest)
+			if (clock() - tele_used_time > tele_CD && inQuest)
 			{
 				if (inTown)
 					mpPlayer->mPlayer.SetPos(D3DXVECTOR3(290, mpTerrain->GetHeight(290, 215), 215));

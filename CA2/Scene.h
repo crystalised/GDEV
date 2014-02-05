@@ -2,6 +2,7 @@
 #include "CameraUtils.h"
 
 static int cogAvailable;
+static bool inQuest; //Whether player is in quest
 
 //Graphics
 static ID3DXFont* mpFont;
@@ -135,7 +136,9 @@ public:
 	void Leave();
 
 private:
-	IDirect3DTexture9* mpBackground;
-	IDirect3DTexture9* mpButtonTex[2];
+	POINT mousepos;
+	IDirect3DTexture9* mpBackground[4];
+	IDirect3DTexture9* mpButtonTex[4];
 	IDirect3DTexture9* mpButtonA;
+	int questStage;
 };
