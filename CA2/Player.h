@@ -39,7 +39,7 @@ public:
 	
 	int currentWeapon;
 
-	const float SPEED = 10.0f; //Speed of player movement
+	float SPEED = 10.0f; //Speed of player movement
 	const float turn = D2R(500); //Speed of player camera turn
 	const float groundOffset = 0; //Offset for player from ground
 

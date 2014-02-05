@@ -54,7 +54,7 @@ public:
 	/// returns the height of the terrain, given the x&z coordinates.
 	float GetHeight( float x, float z);
 	/// Returns a point on the ground (with a specified offset)
-	D3DXVECTOR3 GetPointOnGround(D3DXVECTOR3 pos, float offset=1.0f);
+	D3DXVECTOR3 GetPointOnGround(D3DXVECTOR3 pos, float offset=0);
 	/// returns if a given point is above the ground
 	bool IsPointAboveGround(const D3DXVECTOR3& pos,float offset=0);
 	/** Computes the orientation of an object on the ground.

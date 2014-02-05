@@ -121,7 +121,7 @@ void CSceneEngine::Update(float dt)
 
 void CSceneEngine::Draw(float dt)
 {
-	GetDevice()->Clear(0,0,D3DCLEAR_TARGET,MAGENTA_COL,0,0);
+	//GetDevice()->Clear(0,0,D3DCLEAR_TARGET,MAGENTA_COL,0,0);
 	// start at the back & find the last NON popup
 	int startId=0;
 	for(unsigned i=0;i<mScenes.size();i++)

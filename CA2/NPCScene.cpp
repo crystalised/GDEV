@@ -15,15 +15,19 @@ void NPCScene::Enter()
 	mpButtonTex[0] = LoadSpriteTex(GetDevice(), "../media/scene/Back1.png");
 	mpButtonTex[1] = LoadSpriteTex(GetDevice(), "../media/scene/Back2.png"); //Highlighted
 	mpBackground = LoadSpriteTex(GetDevice(), "../media/scene/NPCChat.png"); //Background
+
+	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
 }
 void NPCScene::Update(float dt)
 {
 	CScene::Update(dt);	// MUST CALL BASE CLASS'S Update
 	if (IsTopMost() == false)	return;	// Pause if I'm not the topmost screen
 
-	// WARNING: you cannot have two calls to KeyPress for the same key within a function
-	// the second call always gives false
-	// therefore one KeyPress with many tests within it
+	if (mpGamepad->IsGamepadConnected(0))
+	{
+		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_B))
+			ExitScene();
+	}
 	if (CGameWindow::KeyPress(VK_LBUTTON))
 	{
 		POINT mouse = CGameWindow::GetMousePos();
@@ -35,31 +39,20 @@ void NPCScene::Update(float dt)
 }
 void NPCScene::Draw(float dt)
 {
-	GetDevice()->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, HELP_COL, 1.0f, 0);
+	//GetDevice()->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, , 1.0f, 0);
 	GetDevice()->BeginScene();
 
-	RECT window = { 20, 30, 180, 230 };
+	RECT window = { 360, 180, 920, 540 };
 
 	GetSprite()->Begin(D3DXSPRITE_ALPHABLEND);
 
-	DrawSprite(GetSprite(), mpBackground, 0, 0);
+	RECT r = GetEngine()->GetWindowRect();
+	D3DCOLOR inactive = WHITE_COL*0.5f;
+
+	DrawSprite(GetSprite(), mpBackground, window);
 
 	// you can draw fonts with scaling & other effects using DrawD3DFontEx
 	// but it must have a spitebatch set with D3DXSPRITE_ALPHABLEND
-	DrawD3DFontEx(mpFont, GetSprite(), "Instructions", D3DXVECTOR2(100, 0),
-		EMERALD_COL, D3DXVECTOR2(0, 0), 2.0f);
-
-	DrawD3DFontEx(mpFont, GetSprite(), "Controls", D3DXVECTOR2(100, 50),
-		EMERALD_COL, D3DXVECTOR2(0, 0), 1.5f);
-
-	DrawD3DFontEx(mpFont, GetSprite(), "WASD - Move Player \nMouse - Move view (in first/third person view) \nLeft Click - Shoot \nF1-F5 - Switch views(Tracking, First Person, Third Person, Overhead Fixed, Top)", D3DXVECTOR2(100, 100),
-		YELLOW_COL, D3DXVECTOR2(0, 0), 1.0f);
-
-	DrawD3DFontEx(mpFont, GetSprite(), "Objectives", D3DXVECTOR2(100, 250),
-		EMERALD_COL, D3DXVECTOR2(0, 0), 1.5f);
-
-	DrawD3DFontEx(mpFont, GetSprite(), "Collect all the diamonds while navigating through the\nmaze before the time runs out!", D3DXVECTOR2(100, 300),
-		YELLOW_COL, D3DXVECTOR2(0, 0), 1.0f);
 
 	POINT mouse = CGameWindow::GetMousePos();
 	if (InSprite(mouse, BACK_BUT, mpButtonTex[0])) //Highlighted the back button
@@ -73,10 +66,79 @@ void NPCScene::Draw(float dt)
 
 	GetSprite()->End();
 
-	DrawTransitionFade();	// fade, just add it before the EndScene
+	//DrawTransitionFade();	// fade, just add it before the EndScene
 	GetDevice()->EndScene();
 	// note: no need to call Present, that is done in the CSceneEngine
 }
+
+//void ::Draw(float dt)
+//{
+//	GetDevice()->BeginScene();
+//	GetSprite()->Begin(D3DXSPRITE_ALPHABLEND);
+//
+//	POINT mouse = CGameWindow::GetMousePos();
+//
+//	RECT r = GetEngine()->GetWindowRect();
+//	D3DCOLOR inactive = WHITE_COL*0.5f;
+//
+//	if (inAdvice)
+//	{
+//		DrawSprite(GetSprite(), mpQuestTex[1], r);
+//
+//		if (InSprite(mouse, CANCEL_BUT, mpButtonTex[5]))
+//			DrawSprite(GetSprite(), mpButtonTex[5], CANCEL_BUT);
+//		else
+//			DrawSprite(GetSprite(), mpButtonTex[5], CANCEL_BUT, inactive);
+//	}
+//	else if (inQuest)
+//	{
+//		DrawSprite(GetSprite(), mpQuestTex[2], r);
+//
+//		if (!questCompleted)
+//		{
+//			if (InSprite(mouse, ACCEPT_BUT, mpButtonTex[4]))
+//				DrawSprite(GetSprite(), mpButtonTex[4], ACCEPT_BUT);
+//			else
+//				DrawSprite(GetSprite(), mpButtonTex[4], ACCEPT_BUT, inactive);
+//		}
+//
+//		if (InSprite(mouse, CANCEL_BUT, mpButtonTex[5]))
+//			DrawSprite(GetSprite(), mpButtonTex[5], CANCEL_BUT);
+//		else
+//			DrawSprite(GetSprite(), mpButtonTex[5], CANCEL_BUT, inactive);
+//	}
+//	else
+//	{
+//		DrawSprite(GetSprite(), mpQuestTex[0], r);
+//
+//		if (InSprite(mouse, ADVISE_BUT, mpButtonTex[0]))
+//			DrawSprite(GetSprite(), mpButtonTex[0], ADVISE_BUT);
+//		else
+//			DrawSprite(GetSprite(), mpButtonTex[0], ADVISE_BUT, inactive);
+//
+//		if (InSprite(mouse, QUEST_BUT, mpButtonTex[1]))
+//			DrawSprite(GetSprite(), mpButtonTex[1], QUEST_BUT);
+//		else
+//			DrawSprite(GetSprite(), mpButtonTex[1], QUEST_BUT, inactive);
+//
+//		if (InSprite(mouse, SHOP_BUT, mpButtonTex[2]))
+//			DrawSprite(GetSprite(), mpButtonTex[2], SHOP_BUT);
+//		else
+//			DrawSprite(GetSprite(), mpButtonTex[2], SHOP_BUT, inactive);
+//
+//		if (InSprite(mouse, LEAVE_BUT, mpButtonTex[3]))
+//			DrawSprite(GetSprite(), mpButtonTex[3], LEAVE_BUT);
+//		else
+//			DrawSprite(GetSprite(), mpButtonTex[3], LEAVE_BUT, inactive);
+//	}
+//
+//	if (useMouse)
+//		DrawSprite(GetSprite(), mpCursorTex, mouse, WHITE_COL);
+//
+//	GetSprite()->End();
+//	GetDevice()->EndScene();
+//}
+
 void NPCScene::Leave()
 {
 	std::cout << "HelpScene::Leave\n";

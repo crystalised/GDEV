@@ -33,6 +33,10 @@ void Player::Update(float dt) //Update player based on input
 		turnCam = mpGamepad->GetVector(0, RIGHT_Y_INV, RIGHT_X, NONE) / 5; //reduce sensitivity
 		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_A))
 			Jump();
+		if (mpGamepad->GetLeftTrigger(0) > 0)
+			SPEED = 50.0f;
+		else
+			SPEED = 10.0f;
 	}
 	else
 	{

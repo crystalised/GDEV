@@ -30,6 +30,7 @@ void GameScene::Enter()
 	mpPlayer->mPlayer.SetHpr(mCamera.GetHpr());
 	mCamera.mMode = 1;
 	cogAvailable = 0;
+	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
 
 	//Setup enemies
 	maxEnemies = 4;
@@ -39,7 +40,7 @@ void GameScene::Enter()
 		{
 			mpEnemy = new Enemy(mpEnemyBulletMesh, mpTerrain);
 			mpEnemy->Init(mpEnemyMesh);
-			mpEnemy->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(x, mpTerrain->GetHeight(x, z), z), 1.0f));
+			mpEnemy->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(x, mpTerrain->GetHeight(x, z), z)));
 			mpEnemy->mLife = 100;
 			mEnemies.push_back(mpEnemy);
 		}
@@ -78,9 +79,18 @@ void GameScene::Update(float dt)
 
 	if (CGameWindow::KeyPress(VK_F7))
 		bossSpawnMinions = true;
-
-	if (CGameWindow::KeyPress('Q'))
-		TalkToNpc();
+	if (mpGamepad->IsGamepadConnected(0))
+	{
+		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_Y))
+		{
+			TalkToNpc();
+		}
+	}
+	else
+	{
+		if (CGameWindow::KeyPress('Q'))
+			TalkToNpc();
+	}
 
 	//Player
 	mpPlayer->Update(dt);
@@ -104,7 +114,7 @@ void GameScene::Update(float dt)
 
 		mpEnemy = new Enemy(mpEnemyBulletMesh, mpTerrain);
 		mpEnemy->Init(mpEnemyMesh);
-		mpEnemy->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(x, mpTerrain->GetHeight(x, z), z), 1.0f));
+		mpEnemy->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(x, mpTerrain->GetHeight(x, z), z)));
 		mpEnemy->mLife = 100;
 		mEnemies.push_back(mpEnemy);
 
@@ -305,7 +315,7 @@ void GameScene::CollisionCheck()
 
 		if (!mpPlayer->mRockets[b]->IsAlive())
 		{
-			mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 10);
+			mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(5.0f, 10.0f), 50);
 		}
 	}
 
