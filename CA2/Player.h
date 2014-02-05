@@ -34,7 +34,6 @@ public:
 	const int rocket_CD = 3000;
 	clock_t rocket_used_time;
 	CExplosion* mRocketExplode;
-	CMeshNode mWeapon;
 	
 	int currentWeapon;
 
@@ -53,7 +52,7 @@ public:
 	~Player();
 	void Update(float dt);
 	void Draw();
-	void Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inRocketMesh, CXMesh* inWeaponMesh);
+	void Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inRocketMesh);
 	void ChangeWeapon(int inW);
 	void UpdateWeapon(float dt);
 	void Jump();

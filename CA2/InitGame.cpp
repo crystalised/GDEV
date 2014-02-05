@@ -13,6 +13,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	ENABLE_LEAK_DETECTION();	// Enable run-time memory check for debug builds.
 	CSceneEngine eng(1280, 720, screenMode);
 	eng.AddComponent(new CGamepadComponent());
-	eng.AddScene(new DeathScene());
+	eng.AddScene(new GameScene());
 	return eng.Go(hInstance);	// runs everything
 }

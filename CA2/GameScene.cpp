@@ -20,24 +20,24 @@ void GameScene::Enter()
 	mpEnemyBulletMesh = new CXMesh(GetDevice(), "../media/Model/Bullet.x");
 	mpBossMesh = new CXMesh(GetDevice(), "../media/Model/Boss.x");
 	mpBossBulletMesh = new CXMesh(GetDevice(), "../media/Model/Bullet.x");
-	mpNPCMesh = new CXMesh(GetDevice(), "../media/Model/NPC.x");
+	mpNPCMesh = new CXMesh(GetDevice(), "../media/Model/Npc.x");
 	mpCogWheelMesh = new CXMesh(GetDevice(), "../media/Model/Gear.x");
-	mpWeaponMesh = new CXMesh(GetDevice(), "../media/Model/FlameThrower.x");
+	mpHutMesh = new CXMesh(GetDevice(), "../media/Model/Hut.X");
 	mpCrossHair = LoadSpriteTex(GetDevice(), "../media/crosshair.png");
 
 	//Setup player and camera
 	mpPlayer = new Player(mpPlayerMesh, mpTerrain);
-	mpPlayer->Init(GetDevice(), mpFlameMesh, mpRocketMesh, mpWeaponMesh);
+	mpPlayer->Init(GetDevice(), mpFlameMesh, mpRocketMesh);
 	mpPlayer->mPlayer.SetHpr(mCamera.GetHpr());
 	mCamera.mMode = 1;
 	cogAvailable = 0;
 	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
 
 	//Setup enemies
-	maxEnemies = 4;
-	for (int x = -50; x < 50; x += 50)
+	maxEnemies = 25;
+	for (int x = 260; x < 320; x += randi(12, 16))
 	{
-		for (int z = -50; z < 50; z += 50)
+		for (int z = 185; z < 245; z += randi(12, 16))
 		{
 			mpEnemy = new Enemy(mpEnemyBulletMesh, mpTerrain);
 			mpEnemy->Init(mpEnemyMesh);
@@ -50,8 +50,8 @@ void GameScene::Enter()
 	//Setup boss
 	mpBoss = new Boss(mpBossBulletMesh, mpTerrain);
 	mpBoss->Init(mpBossMesh);
-	mpBoss->SetPos(mpTerrain->GetPointOnGround(mpPlayer->GetPos() + D3DXVECTOR3(10, 0, 10)));
-	mpBoss->mLife = 1000;
+	mpBoss->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(210, mpTerrain->GetHeight(210, 60), 60)));
+	mpBoss->mLife = 1500;
 	bossActive = false;
 	bossSpawnMinions = false;
 	bossSpawned1 = false;
@@ -62,7 +62,15 @@ void GameScene::Enter()
 	mpNPC->Init(mpNPCMesh);
 	mpNPC->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(66.0f, mpTerrain->GetHeight(66.0f, 498.0f), 498.0f)));
 
+	mpHut = new NPC();
+	mpHut->Init(mpHutMesh);
+	mpHut->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(65.2f, mpTerrain->GetHeight(66.0f, 498.0f), 501.4f)));
+
 	gameFont = CreateD3DFont(GetDevice(), "Segoe UI", 24, false);
+
+	inTown = true;
+	tele_used_time = 0;
+	teleportToBoss = false;
 }
 
 void GameScene::Update(float dt)
@@ -88,7 +96,7 @@ void GameScene::Update(float dt)
 
 	UpdateEnemies(mEnemies, &mpPlayer->mPlayer, dt);
 
-	if (maxEnemies < 4)
+	if (maxEnemies < 25)
 	{
 		int x = randi(-10, 10);
 		int z = randi(-10, 10);
@@ -100,6 +108,15 @@ void GameScene::Update(float dt)
 		mEnemies.push_back(mpEnemy);
 
 		maxEnemies += 1;
+	}
+
+	if (teleportToBoss)
+	{
+		mpPlayer->mPlayer.mLife = 100;
+		teleportToBoss = false;
+		bossActive = true;
+		mpPlayer->mPlayer.SetPos(D3DXVECTOR3(210, mpTerrain->GetHeight(210, 90), 90));
+		mpPlayer->mPlayer.SetHpr(D3DXVECTOR3(-0.16f, -3.14f, 0));
 	}
 
 	if (bossActive)
@@ -183,6 +200,9 @@ void GameScene::Draw(float dt)
 	//NPC
 	mpNPC->Draw();
 
+	//Huts
+	mpHut->Draw();
+
 	//Items
 	DrawItems(mCog);
 
@@ -200,6 +220,7 @@ void GameScene::Draw(float dt)
 	sout << "\n boss Active: " << bossActive;
 	sout << "\n Boss Health: " << mpBoss->mLife;
 	sout << "\n Cogs Available: " << cogAvailable;
+	sout << "\n In Town: " << inTown;
 
 	DrawD3DFont(gameFont, sout.str().c_str(), 20, 20, RED_COL);
 
@@ -226,7 +247,8 @@ void GameScene::Leave()
 	SAFE_DELETE(mpNPCMesh);
 	SAFE_DELETE(mpNPC);
 	SAFE_DELETE(mpCogWheelMesh);
-	SAFE_DELETE(mpWeaponMesh);
+	SAFE_DELETE(mpHutMesh);
+	SAFE_DELETE(mpHut);
 
 	//Delete all enemies
 	for (int i = (int)mEnemies.size() - 1; i >= 0; i--)
@@ -277,7 +299,7 @@ void GameScene::CollisionCheck()
 			DeleteDeadMeshNodes(mEnemies[en]->mBullets); //Delete dead enemy bullets
 		}
 
-		if (mEnemies[en]->mLife == 0)
+		if (mEnemies[en]->mLife == 0 && !bossActive)
 		{
 			mpCogWheel = new Item();
 			mpCogWheel->Init(mpCogWheelMesh);
@@ -371,7 +393,7 @@ void GameScene::HandleInput(float dt)
 		ExitScene();
 
 	if (CGameWindow::KeyPress(VK_F8))
-		bossActive = !bossActive;
+		teleportToBoss = true;
 
 	if (CGameWindow::KeyPress(VK_F7))
 		bossSpawnMinions = true;
@@ -403,6 +425,19 @@ void GameScene::HandleInput(float dt)
 		{
 			TalkToNpc();
 		}
+
+		if (mpGamepad->IsButtonPressed2(0, XINPUT_GAMEPAD_START  && mpNPC->inQuest))
+		{
+			if (clock() - tele_used_time > tele_CD)
+			{
+				if (inTown)
+					mpPlayer->mPlayer.SetPos(D3DXVECTOR3(290, mpTerrain->GetHeight(290, 215), 215));
+				else
+					mpPlayer->mPlayer.SetPos(D3DXVECTOR3(70.0f, mpTerrain->GetHeight(70.0f, 464.0f), 464.0f));
+				inTown = !inTown;
+				tele_used_time = clock();
+			}
+		}
 	}
 	else
 	{
@@ -428,6 +463,18 @@ void GameScene::HandleInput(float dt)
 		}
 		if (CGameWindow::KeyPress('Q'))
 			TalkToNpc();
+		if (CGameWindow::KeyPress('Y'))
+		{
+			if (clock() - tele_used_time > tele_CD && mpNPC->inQuest)
+			{
+				if (inTown)
+					mpPlayer->mPlayer.SetPos(D3DXVECTOR3(290, mpTerrain->GetHeight(290, 215), 215));
+				else
+					mpPlayer->mPlayer.SetPos(D3DXVECTOR3(70.0f, mpTerrain->GetHeight(70.0f, 464.0f), 464.0f));
+				inTown = !inTown;
+				tele_used_time = clock();
+			}
+		}
 	}
 
 	mpPlayer->mPlayer.Move(move * dt * mpPlayer->SPEED);

@@ -39,7 +39,8 @@ class GameScene : public CScene
 	CXMesh* mpBossBulletMesh;
 	CXMesh* mpNPCMesh;
 	CXMesh* mpCogWheelMesh;
-	CXMesh* mpWeaponMesh;
+	CXMesh* mpHutMesh;
+
 	Player* mpPlayer;
 	int maxEnemies;
 	Enemy* mpEnemy;
@@ -49,8 +50,14 @@ class GameScene : public CScene
 	bool bossSpawnMinions;
 	bool bossSpawned1, bossSpawned2;
 	NPC* mpNPC;
+	NPC* mpHut; //non npc, using for placeholder
 	Item* mpCogWheel;
 	vector<Item*> mCog;
+
+	bool inTown;
+	const int tele_CD = 15000;
+	clock_t tele_used_time;
+	bool teleportToBoss;
 
 	ID3DXFont* gameFont;
 
@@ -130,4 +137,5 @@ public:
 private:
 	IDirect3DTexture9* mpBackground;
 	IDirect3DTexture9* mpButtonTex[2];
+	IDirect3DTexture9* mpButtonA;
 };

@@ -57,7 +57,7 @@ void Enemy::Update(float dt, CMeshNode* inPlayer)
 		D3DXVECTOR3 vel = RotateVector(FORWARD);
 		if (clock() - gun_used_time > gun_CD)
 		{
-			vel *= 5;
+			vel *= 15;
 			CShot* shot = new CShot();
 			shot->Init(mBulletMesh, GetPos(), GetHpr());
 			shot->mPos = GetPos();

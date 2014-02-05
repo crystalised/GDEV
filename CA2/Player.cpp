@@ -22,7 +22,6 @@ Player::~Player()
 
 void Player::Update(float dt) //Update player based on input
 {
-	mWeapon.mPos = mPlayer.OffsetPos(D3DXVECTOR3(0, 0.4f, 0));
 	if (mPlayer.GetPos().y < 25.0f)
 	{
 		mPlayer.mLife = 0;
@@ -54,10 +53,9 @@ void Player::Draw()
 	mRocketExplode->Draw(IDENTITY_MAT);
 	//DrawMeshNodes(mFlames);
 	mRocketTrail->Draw(IDENTITY_MAT);
-	mWeapon.Draw();
 }
 
-void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBombMesh, CXMesh* inWeaponMesh)
+void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBombMesh)
 {
 	mFlameMesh = inFlameMesh;
 
@@ -85,9 +83,6 @@ void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBom
 
 	mRocketTrail = new CParticleSystem();
 	mRocketTrail->Init(inDevice, "../media/Particle/flare.bmp", settings);
-
-	mWeapon.Init(inWeaponMesh, mPlayer.OffsetPos(D3DXVECTOR3(-0.07f, 0.8f, 0.5f)));
-	mWeapon.SetHpr(D3DXVECTOR3(0, 280, 0));
 }
 
 void Player::ChangeWeapon(int inW)
