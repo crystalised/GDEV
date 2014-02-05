@@ -8,7 +8,7 @@ Player::Player(CXMesh* inPlayerMesh, CTerrain* inTerrain, CSceneEngine* inEngine
 	mPlayer.mLife = 100;
 	playerState = STANDING; //Player default state is standing
 	currentWeapon = 1; //Player default weapon is flame thrower(1)
-	bomb_used_time = 0;
+	rocket_used_time = 0;
 
 	//Init gamepad
 	mpGamepad = inEngine->FindComponent<CGamepadComponent>();
@@ -18,9 +18,9 @@ Player::~Player()
 {
 	SAFE_DELETE(mFlameThrower);
 	DeleteMeshNodes(mFlames);
-	DeleteMeshNodes(mBombs);
-	SAFE_DELETE(mBombExplode);
-	SAFE_DELETE(mBombTrail);
+	DeleteMeshNodes(mRockets);
+	SAFE_DELETE(mRocketExplode);
+	SAFE_DELETE(mRocketTrail);
 }
 
 void Player::Update(float dt) //Update player based on input
@@ -85,10 +85,10 @@ void Player::Draw()
 {
 	mPlayer.Draw();
 	mFlameThrower->Draw(IDENTITY_MAT);
-	DrawMeshNodes(mBombs);
-	mBombExplode->Draw(IDENTITY_MAT);
+	DrawMeshNodes(mRockets);
+	mRocketExplode->Draw(IDENTITY_MAT);
 	//DrawMeshNodes(mFlames);
-	mBombTrail->Draw(IDENTITY_MAT);
+	mRocketTrail->Draw(IDENTITY_MAT);
 }
 
 void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBombMesh)
@@ -109,16 +109,16 @@ void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBom
 	mFlameThrower = new CParticleSystem();
 	mFlameThrower->Init(inDevice, "../media/Particle/flare.bmp", settings);
 
-	mBombMesh = inBombMesh;
-	mBombExplode = new CExplosion();
-	mBombExplode->Init(inDevice, "../media/Particle/spark.bmp");
+	mRocketMesh = inBombMesh;
+	mRocketExplode = new CExplosion();
+	mRocketExplode->Init(inDevice, "../media/Particle/spark.bmp");
 
 	settings.LifeTime = 0.5f;
 	settings.StartColor = D3DCOLOR_XRGB(255, 141, 29);
 	settings.Size = 0.15;
 
-	mBombTrail = new CParticleSystem();
-	mBombTrail->Init(inDevice, "../media/Particle/flare.bmp", settings);
+	mRocketTrail = new CParticleSystem();
+	mRocketTrail->Init(inDevice, "../media/Particle/flare.bmp", settings);
 }
 
 void Player::ChangeWeapon(int inW)
@@ -152,18 +152,18 @@ void Player::UpdateWeapon(float dt)
 		}
 	}
 
-	for (int i = 0; i < mBombs.size(); i++)
+	for (int i = 0; i < mRockets.size(); i++)
 	{
 		D3DXVECTOR3 vel = mPlayer.RotateVector(D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 0.2f, 1.0f));
 		vel *= -50;
-		mBombTrail->AddParticle(mBombs[i]->GetPos(), vel);
+		mRocketTrail->AddParticle(mRockets[i]->GetPos(), vel);
 	}
 
 	mFlameThrower->Update(dt);
-	mBombExplode->Update(dt);
-	mBombTrail->Update(dt);
+	mRocketExplode->Update(dt);
+	mRocketTrail->Update(dt);
 	UpdateMeshNodes(mFlames, dt, mTerrain);
-	UpdateMeshNodes(mBombs, dt);
+	UpdateMeshNodes(mRockets, dt);
 }
 
 void Player::Jump()
@@ -171,7 +171,7 @@ void Player::Jump()
 	CGameWindow::ClearKeyPress();
 	if (playerState == STANDING)
 	{
-		jumpHeight = mPlayer.GetPos().y + 6;
+		jumpHeight = mPlayer.GetPos().y + 4;
 		playerState = JUMPING;
 	}
 }
@@ -179,13 +179,14 @@ void Player::Jump()
 void Player::Shoot()
 {
 	CGameWindow::ClearKeyPress();
-	const D3DXVECTOR3 FORWARD(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 0.2f, 1.0f); //Direction of particles
-	D3DXVECTOR3 vel = mPlayer.RotateVector(FORWARD);	// gets camera's forward
-
+	D3DXVECTOR3 vel;
+	
 	switch (currentWeapon)
 	{
 	case 1:
 	{
+		D3DXVECTOR3 FORWARD(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 0, 1.0f); //Direction of particles
+		vel = mPlayer.RotateVector(FORWARD);	// gets camera's forward
 		vel *= CParticleSystem::GetRandomFloat(0.2f, 1.0f) * 200;
 
 		CShot* shot = new CShot();
@@ -202,18 +203,20 @@ void Player::Shoot()
 		break;
 	}
 	case 2:
-		if (clock() - bomb_used_time > bomb_CD)
+		if (clock() - rocket_used_time > rocket_CD)
 		{
+			D3DXVECTOR3 FORWARD(0, 0, 1.0f); //Direction of particles
+			vel = mPlayer.RotateVector(FORWARD);
 			vel *= 25;
 
 			CShot* shot = new CShot();
-			shot->Init(mBombMesh, mPlayer.GetPos(), mPlayer.GetHpr());
-			shot->mPos = mPlayer.GetPos() + D3DXVECTOR3(-0.2f, 0, -0.5f);
+			shot->Init(mRocketMesh, mPlayer.GetPos(), mPlayer.GetHpr());
+			shot->mPos = mPlayer.GetPos() + D3DXVECTOR3(-0.2f, 0.5f, -0.5f);
 			shot->mVel = vel;
 			shot->mScale = 1.0f;
 			shot->mLife = 2000;
-			mBombs.push_back(shot);
-			bomb_used_time = clock();
+			mRockets.push_back(shot);
+			rocket_used_time = clock();
 			break;
 		}
 	}

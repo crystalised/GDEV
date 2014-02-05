@@ -60,7 +60,7 @@ void Enemy::Update(float dt, CMeshNode* inPlayer)
 			vel *= 5;
 			CShot* shot = new CShot();
 			shot->Init(mBulletMesh, GetPos(), GetHpr());
-			shot->mPos = mTerrain->GetPointOnGround(GetPos());
+			shot->mPos = GetPos();
 			shot->mVel = vel;
 			shot->mScale = 0.5f;
 			shot->mLife = 3000;

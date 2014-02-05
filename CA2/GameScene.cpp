@@ -13,19 +13,21 @@ void GameScene::Enter()
 	// setup scene
 	SetupDefaultD3DOptions(GetDevice(), true);
 	// the models
-	mpEnemyMesh = new CXMesh(GetDevice(), "../media/arrow.x");
-	mpPlayerMesh = new CXMesh(GetDevice(), "../media/yellow_ball.x");
+	mpEnemyMesh = new CXMesh(GetDevice(), "../media/Model/Monster.x");
+	mpPlayerMesh = new CXMesh(GetDevice(), "../media/Model/Player.x");
 	mpFlameMesh = new CXMesh(GetDevice(), "../media/yellow_ball.x");
-	mpBombMesh = new CXMesh(GetDevice(), "../media/yellow_ball.x");
-	mpEnemyBulletMesh = new CXMesh(GetDevice(), "../media/yellow_ball.x");
-	mpBossMesh = new CXMesh(GetDevice(), "../media/crate.x");
-	mpBossBulletMesh = new CXMesh(GetDevice(), "../media/yellow_ball.x");
-	mpNPCMesh = new CXMesh(GetDevice(), "../media/Model/Model.x");
-	mpCogWheelMesh = new CXMesh(GetDevice(), "../media/teapot.x");
+	mpRocketMesh = new CXMesh(GetDevice(), "../media/Model/Rocket.x");
+	mpEnemyBulletMesh = new CXMesh(GetDevice(), "../media/Model/Bullet.x");
+	mpBossMesh = new CXMesh(GetDevice(), "../media/Model/Boss.x");
+	mpBossBulletMesh = new CXMesh(GetDevice(), "../media/Model/Bullet.x");
+	mpNPCMesh = new CXMesh(GetDevice(), "../media/Model/NPC.x");
+	mpCogWheelMesh = new CXMesh(GetDevice(), "../media/Model/Gear.x");
+	mpCrossHair = LoadSpriteTex(GetDevice(), "../media/crosshair.png");
 
 	//Setup player and camera
 	mpPlayer = new Player(mpPlayerMesh, mpTerrain, GetEngine());
-	mpPlayer->Init(GetDevice(), mpFlameMesh, mpBombMesh);
+	mpPlayer->Init(GetDevice(), mpFlameMesh, mpRocketMesh);
+	mpPlayer->mPlayer.SetHpr(mCamera.GetHpr());
 	mCamera.mMode = 1;
 	cogAvailable = 0;
 
@@ -50,6 +52,8 @@ void GameScene::Enter()
 	mpBoss->mLife = 1000;
 	bossActive = false;
 	bossSpawnMinions = false;
+	bossSpawned1 = false;
+	bossSpawned2 = false;
 
 	//Setup NPC
 	mpNPC = new NPC();
@@ -111,6 +115,18 @@ void GameScene::Update(float dt)
 	{
 		mpBoss->Update(dt, &mpPlayer->mPlayer);
 
+		if (mpBoss->mLife <= 700 && bossSpawned1 == false)
+		{
+			bossSpawnMinions = true;
+			bossSpawned1 = true;
+		}
+
+		if (mpBoss->mLife <= 400 && bossSpawned2 == false)
+		{
+			bossSpawnMinions = true;
+			bossSpawned2 = true;
+		}
+
 		if (bossSpawnMinions)
 		{
 			D3DXVECTOR3 left = mpBoss->GetPos() + D3DXVECTOR3(-5, 0, 0);
@@ -135,6 +151,11 @@ void GameScene::Update(float dt)
 			ExitScene();
 			GetEngine()->AddScene(new VictoryScene());
 		}
+	}
+
+	for (int i = 0; i < mCog.size(); i++)
+	{
+		mCog[i]->Update(dt);
 	}
 
 	mpNPC->Update(&mpPlayer->mPlayer);
@@ -191,6 +212,10 @@ void GameScene::Draw(float dt)
 
 	DrawD3DFont(gameFont, sout.str().c_str(), 20, 20, RED_COL);
 
+	GetSprite()->Begin(D3DXSPRITE_ALPHABLEND);
+	DrawSprite(GetSprite(), mpCrossHair, 0, 0);
+	GetSprite()->End();
+
 	GetDevice()->EndScene();
 }
 
@@ -203,7 +228,7 @@ void GameScene::Leave()
 	SAFE_DELETE(mpPlayerMesh);
 	SAFE_DELETE(mpFlameMesh);
 	SAFE_DELETE(mpEnemyBulletMesh);
-	SAFE_DELETE(mpBombMesh);
+	SAFE_DELETE(mpRocketMesh);
 	SAFE_DELETE(mpBossBulletMesh);
 	SAFE_DELETE(mpBossMesh);
 	SAFE_DELETE(mpBoss);
@@ -241,18 +266,18 @@ void GameScene::CollisionCheck()
 			}
 		}
 
-		for (int b = 0; b < mpPlayer->mBombs.size(); b++) //Bomb hitting enemy
+		for (int b = 0; b < mpPlayer->mRockets.size(); b++) //Bomb hitting enemy
 		{
-			if (CollisionMeshNode(mpPlayer->mBombs[b], mEnemies[en])) //Collision between bom and enemy
+			if (CollisionMeshNode(mpPlayer->mRockets[b], mEnemies[en])) //Collision between bom and enemy
 			{
-				mpPlayer->mBombs[b]->Destroy();
+				mpPlayer->mRockets[b]->Destroy();
 				mEnemies[en]->Destroy();
-				mpPlayer->mBombExplode->Explode(mpPlayer->mBombs[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 50);
+				mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 50);
 			}
 		}
 		for (int n = 0; n < mEnemies[en]->mBullets.size(); n++)
 		{
-			if (CollisionMeshNode(mEnemies[en]->mBullets[n], &mpPlayer->mPlayer))
+			if (CollisionMeshNode(mEnemies[en]->mBullets[n], &mpPlayer->mPlayer, 1.0f))
 			{
 				mEnemies[en]->mBullets[n]->Destroy();
 				mpPlayer->mPlayer.Damage(10);
@@ -270,17 +295,17 @@ void GameScene::CollisionCheck()
 		}
 	}
 
-	for (int b = 0; b < mpPlayer->mBombs.size(); b++) //Bomb hitting ground
+	for (int b = 0; b < mpPlayer->mRockets.size(); b++) //Bomb hitting ground
 	{
-		if ((mpPlayer->mBombs[b]->GetPos().y) < (mpTerrain->GetHeight(mpPlayer->mBombs[b]->GetPos().x, mpPlayer->mBombs[b]->GetPos().z))) //collision between bomb and ground
+		if ((mpPlayer->mRockets[b]->GetPos().y) < (mpTerrain->GetHeight(mpPlayer->mRockets[b]->GetPos().x, mpPlayer->mRockets[b]->GetPos().z))) //collision between bomb and ground
 		{
-			mpPlayer->mBombExplode->Explode(mpPlayer->mBombs[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 50);
-			mpPlayer->mBombs[b]->Destroy();
+			mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 50);
+			mpPlayer->mRockets[b]->Destroy();
 		}
 
-		if (!mpPlayer->mBombs[b]->IsAlive())
+		if (!mpPlayer->mRockets[b]->IsAlive())
 		{
-			mpPlayer->mBombExplode->Explode(mpPlayer->mBombs[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 10);
+			mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 10);
 		}
 	}
 
@@ -308,19 +333,19 @@ void GameScene::CollisionCheck()
 			}
 		}
 
-		for (int b = 0; b < mpPlayer->mBombs.size(); b++) //Player's missle/bomb
+		for (int b = 0; b < mpPlayer->mRockets.size(); b++) //Player's missle/bomb
 		{
-			if (CollisionMeshNode(mpPlayer->mBombs[b], mpBoss))
+			if (CollisionMeshNode(mpPlayer->mRockets[b], mpBoss))
 			{
-				mpPlayer->mBombs[b]->Destroy();
-				mpPlayer->mBombExplode->Explode(mpPlayer->mBombs[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 2.5f));
+				mpPlayer->mRockets[b]->Destroy();
+				mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 2.5f));
 				mpBoss->Damage(100);
 			}
 		}
 
 		for (int a = 0; a < mpBoss->mBullets.size(); a++) //Boss's bullets
 		{
-			if (CollisionMeshNode(&mpPlayer->mPlayer, mpBoss->mBullets[a]))
+			if (CollisionMeshNode(&mpPlayer->mPlayer, mpBoss->mBullets[a], 1.0f))
 			{
 				mpBoss->mBullets[a]->Destroy();
 				mpPlayer->mPlayer.Damage(20);
@@ -330,7 +355,7 @@ void GameScene::CollisionCheck()
 	}
 
 	DeleteDeadMeshNodes(mpPlayer->mFlames); //Delete dead flame mesh
-	DeleteDeadMeshNodes(mpPlayer->mBombs); //Delete dead bomb mesh
+	DeleteDeadMeshNodes(mpPlayer->mRockets); //Delete dead bomb mesh
 	DeleteDeadEnemies(mEnemies); //Delete dead enemies
 	DeleteCollectedItems(mCog); //Delete collected items
 }

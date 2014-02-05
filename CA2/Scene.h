@@ -29,7 +29,7 @@ class GameScene : public CScene
 	CXMesh* mpEnemyMesh;
 	CXMesh* mpPlayerMesh;
 	CXMesh* mpFlameMesh;
-	CXMesh* mpBombMesh;
+	CXMesh* mpRocketMesh;
 	CXMesh* mpEnemyBulletMesh;
 	CXMesh* mpBossMesh;
 	CXMesh* mpBossBulletMesh;
@@ -42,11 +42,14 @@ class GameScene : public CScene
 	Boss* mpBoss;
 	bool bossActive;
 	bool bossSpawnMinions;
+	bool bossSpawned1, bossSpawned2;
 	NPC* mpNPC;
 	Item* mpCogWheel;
 	vector<Item*> mCog;
 
 	ID3DXFont* gameFont;
+
+	IDirect3DTexture9* mpCrossHair; //Cross hair for aiming
 
 public:
 	void Enter();
@@ -118,6 +121,7 @@ public:
 	void Leave();
 
 private:
+	IDirect3DTexture9* mpBackground;
 	IDirect3DTexture9* mpButtonTex[2];
 	ID3DXFont* mpFont;
 };

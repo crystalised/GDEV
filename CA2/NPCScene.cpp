@@ -14,6 +14,7 @@ void NPCScene::Enter()
 	mpFont = CreateD3DFont(GetDevice(), "Arial", 24, true);
 	mpButtonTex[0] = LoadSpriteTex(GetDevice(), "../media/scene/Back1.png");
 	mpButtonTex[1] = LoadSpriteTex(GetDevice(), "../media/scene/Back2.png"); //Highlighted
+	mpBackground = LoadSpriteTex(GetDevice(), "../media/scene/NPCChat.png"); //Background
 }
 void NPCScene::Update(float dt)
 {
@@ -37,7 +38,12 @@ void NPCScene::Draw(float dt)
 	GetDevice()->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, HELP_COL, 1.0f, 0);
 	GetDevice()->BeginScene();
 
+	RECT window = { 20, 30, 180, 230 };
+
 	GetSprite()->Begin(D3DXSPRITE_ALPHABLEND);
+
+	DrawSprite(GetSprite(), mpBackground, 0, 0);
+
 	// you can draw fonts with scaling & other effects using DrawD3DFontEx
 	// but it must have a spitebatch set with D3DXSPRITE_ALPHABLEND
 	DrawD3DFontEx(mpFont, GetSprite(), "Instructions", D3DXVECTOR2(100, 0),

@@ -31,7 +31,7 @@ public:
 	const int gun_CD = 2000;
 	clock_t gun_used_time;
 
-	const float groundOffset = 1.0f; //Offset for enemy from ground
+	const float groundOffset = 0; //Offset for enemy from ground
 	D3DXVECTOR3 flameDirection;
 
 public:

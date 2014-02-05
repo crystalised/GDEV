@@ -28,12 +28,12 @@ public:
 	vector<CMeshNode*> mFlames; //Vector for flame node
 	int flameThrowerLvl;
 	//Bomb
-	CParticleSystem* mBombTrail;
-	CXMesh* mBombMesh;
-	vector<CMeshNode*> mBombs;
-	const int bomb_CD = 1000;
-	clock_t bomb_used_time;
-	CExplosion* mBombExplode;
+	CParticleSystem* mRocketTrail;
+	CXMesh* mRocketMesh;
+	vector<CMeshNode*> mRockets;
+	const int rocket_CD = 3000;
+	clock_t rocket_used_time;
+	CExplosion* mRocketExplode;
 	//Gamepad
 	CGamepadComponent* mpGamepad;
 	
@@ -41,7 +41,7 @@ public:
 
 	const float SPEED = 10.0f; //Speed of player movement
 	const float turn = D2R(500); //Speed of player camera turn
-	const float groundOffset = 1.0f; //Offset for player from ground
+	const float groundOffset = 0; //Offset for player from ground
 
 	//Player state for jumping motion
 	enum STATE { JUMPING, FALLING, STANDING };
@@ -54,7 +54,7 @@ public:
 	~Player();
 	void Update(float dt);
 	void Draw();
-	void Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBombMesh);
+	void Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inRocketMesh);
 	void ChangeWeapon(int inW);
 	void UpdateWeapon(float dt);
 	void Jump();

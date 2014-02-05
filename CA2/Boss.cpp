@@ -52,7 +52,7 @@ void Boss::Update(float dt, CMeshNode* inPlayer)
 			}
 			RotateTowardsTarget(yaw, delta);
 
-			const D3DXVECTOR3 FORWARD(0.f, 0.f, 1);
+			D3DXVECTOR3 FORWARD(0.f, 0.f, 1);
 			D3DXVECTOR3 vel = RotateVector(FORWARD);
 			if (clock() - gun_used_time > gun_CD)
 			{
@@ -64,6 +64,30 @@ void Boss::Update(float dt, CMeshNode* inPlayer)
 				shot->mScale = 0.5f;
 				shot->mLife = 3000;
 				mBullets.push_back(shot);
+				if (mLife <= 900)
+				{
+					FORWARD = D3DXVECTOR3(CParticleSystem::GetRandomFloat(0.2, 0.5), 0, 1);
+					D3DXVECTOR3 vel2 = RotateVector(FORWARD);
+					vel2 *= 25;
+					CShot* shot2 = new CShot();
+					shot2->Init(mBulletMesh, GetPos(), GetHpr());
+					shot2->mPos = GetPos();
+					shot2->mVel = vel2;
+					shot2->mScale = 0.5f;
+					shot2->mLife = 3000;
+					mBullets.push_back(shot2);
+
+					FORWARD = D3DXVECTOR3(-CParticleSystem::GetRandomFloat(0.2, 0.5), 0, 1);
+					D3DXVECTOR3 vel3 = RotateVector(FORWARD);
+					vel3 *= 25;
+					CShot* shot3 = new CShot();
+					shot3->Init(mBulletMesh, GetPos(), GetHpr());
+					shot3->mPos = GetPos();
+					shot3->mVel = vel3;
+					shot3->mScale = 0.5f;
+					shot3->mLife = 3000;
+					mBullets.push_back(shot3);
+				}
 				gun_used_time = clock();
 				break;
 			}

@@ -10,13 +10,13 @@ void CameraUtils::TrackingCamera(CNode& cam, D3DXVECTOR3 pos,
 
 void CameraUtils::FirstPersonCamera(CNode& cam, CNode& tgt)
 {
-	cam.SetPos((tgt.GetPos() + D3DXVECTOR3(0, 0, 0)));
+	cam.SetPos((tgt.GetPos() + D3DXVECTOR3(0, 0.5f, 0)));
 	cam.SetHpr(tgt.GetHpr());
 }
 
 void CameraUtils::ThirdPersonCamera(CNode& cam, CNode& tgt)
 {
-	D3DXVECTOR3 offset = tgt.OffsetPos(D3DXVECTOR3(0, 3, -5));
+	D3DXVECTOR3 offset = tgt.OffsetPos(D3DXVECTOR3(0, 1.5, -5));
 	InterpolateNode(cam, offset, 0.10f);
 	cam.SetPos(cam.GetPos());
 	cam.LookAt(tgt);
