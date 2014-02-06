@@ -4,7 +4,7 @@ Player::Player(CXMesh* inPlayerMesh, CTerrain* inTerrain) //Input player mesh an
 {
 	mTerrain = inTerrain;
 	mPlayer.Init(inPlayerMesh);
-	mPlayer.SetPos(D3DXVECTOR3(70.0f, mTerrain->GetHeight(70.0f, 464.0f), 464.0f));
+	mPlayer.SetPos(D3DXVECTOR3(53.93f, mTerrain->GetHeight(53.93f, 481.04f), 481.04f));
 	mPlayer.mLife = 100;
 	playerState = STANDING; //Player default state is standing
 	currentWeapon = 1; //Player default weapon is flame thrower(1)
@@ -43,6 +43,12 @@ void Player::Update(float dt) //Update player based on input
 			mPlayer.SetPos(mTerrain->GetPointOnGround(mPlayer.GetPos(), groundOffset));
 			break;
 	}
+
+	if (clock() - rocket_used_time > rocket_CD)
+		rocketReady = true;
+	else
+		rocketReady = false;
+
 }
 
 void Player::Draw()
@@ -147,7 +153,6 @@ void Player::Shoot()
 	case 2:
 		if (clock() - rocket_used_time > rocket_CD)
 		{
-			rocketReady = true;
 			D3DXVECTOR3 FORWARD(0, 0, 1.0f); //Direction of particles
 			vel = mPlayer.RotateVector(FORWARD);
 			vel *= 25;
@@ -161,10 +166,6 @@ void Player::Shoot()
 			mRockets.push_back(shot);
 			rocket_used_time = clock();
 			break;
-		}
-		else
-		{
-			rocketReady = false;
 		}
 	}
 }

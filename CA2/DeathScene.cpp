@@ -34,9 +34,11 @@ void DeathScene::Update(float dt)
 	// therefore one KeyPress with many tests within it
 	if (mpGamepad->IsGamepadConnected(0))
 	{
-		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_B))
+		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_B))
+		{
 			mpDeathSFX->PlayCue("ClickSound");
 			ExitScene();
+		}
 	}
 	else
 	{

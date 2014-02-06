@@ -16,7 +16,6 @@
 const D3DXCOLOR      WHITE( D3DCOLOR_XRGB(255, 255, 255) );
 const D3DXCOLOR      BLACK( D3DCOLOR_XRGB(  0,   0,   0) );
 const D3DXCOLOR        RED( D3DCOLOR_XRGB(255,   0,   0) );
-const D3DXCOLOR      GREEN( D3DCOLOR_XRGB(  0, 255,   0) );
 const D3DXCOLOR       BLUE( D3DCOLOR_XRGB(  0,   0, 255) );
 const D3DXCOLOR     YELLOW( D3DCOLOR_XRGB(255, 255,   0) );
 const D3DXCOLOR       CYAN( D3DCOLOR_XRGB(  0, 255, 255) );
@@ -310,11 +309,11 @@ bool CTerrain::GenerateTexture( const D3DXVECTOR3& inDirectionToLight )
 			else if (theHeight > 170.0f)
 				c = D3DXCOLOR(0.314f, 0.278f, 0.243f, 1.0f);
 			else if (theHeight > 127.5f)
-				c = D3DXCOLOR(0.055f, 0.275f, 0.106f, 1.0f);
+				c = D3DXCOLOR(40, 40, 40, 1.0f);
 			else if (theHeight > 85.0f)
-				c = D3DXCOLOR(0.0f, 0.549f, 0.267f, 1.0f);
-			else if (theHeight > 42.5f)
-				c = D3DXCOLOR(0.404f, 0.635f, 0.38f, 1.0f);
+				c = D3DXCOLOR(40, 40, 40, 1.0f);
+			else if (theHeight > 38.5f)
+				c = WHITE;
 			else
 				c = D3DXCOLOR(0.945f, 0.922f, 0.58f, 1.0f);
 

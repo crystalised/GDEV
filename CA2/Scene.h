@@ -43,6 +43,7 @@ class GameScene : public CScene
 	CXMesh* mpHutMesh;
 
 	Player* mpPlayer;
+	D3DXVECTOR3 lastPos;
 	int maxEnemies;
 	Enemy* mpEnemy;
 	vector<Enemy*> mEnemies;

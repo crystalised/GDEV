@@ -38,6 +38,7 @@ void GameScene::Enter()
 	//Setup player and camera
 	mpPlayer = new Player(mpPlayerMesh, mpTerrain);
 	mpPlayer->Init(GetDevice(), mpFlameMesh, mpRocketMesh);
+	mCamera.SetHpr(D3DXVECTOR3(0.05, 2.35, 0.00));
 	mpPlayer->mPlayer.SetHpr(mCamera.GetHpr());
 	mCamera.mMode = 1;
 	cogAvailable = 0;
@@ -100,10 +101,10 @@ void GameScene::Update(float dt)
 	HandleInput(dt);
 	if (mpPlayer->mPlayer.mLife <= 0) //show death scene when player is dead
 	{
-		mpGameBGM->StopCue("GameBgm");
-		mpGameSFX->PlayCue("GameoverSound");
 		ExitScene();
 		GetEngine()->AddScene(new DeathScene());
+		mpGameBGM->StopCue("GameBgm");
+		mpGameSFX->PlayCue("GameoverSound");
 	}
 
 	//Update weather
@@ -197,7 +198,7 @@ void GameScene::Draw(float dt)
 	GetDevice()->BeginScene();
 
 	// the terrain
-	mpTerrain->Draw(IDENTITY_MAT, true);
+	mpTerrain->Draw(IDENTITY_MAT, false);
 	//Weather
 	mpWeather->Draw(IDENTITY_MAT);
 
@@ -224,7 +225,7 @@ void GameScene::Draw(float dt)
 
 	//GetEngine()->DrawColourTint(D3DXCOLOR(0.4, 0, 0, (100 - mpPlayer->mPlayer.mLife) / 100));
 
-	/*stringstream sout;
+	stringstream sout;
 	sout << "Player pos: " << mpPlayer->mPlayer.GetPos();
 	sout << "Player hpr: " << mpPlayer->mPlayer.GetHpr();
 	sout << "\nNo of enemies: " << mEnemies.size();
@@ -236,9 +237,9 @@ void GameScene::Draw(float dt)
 	sout << "\n boss Active: " << bossActive;
 	sout << "\n Boss Health: " << mpBoss->mLife;
 	sout << "\n Cogs Available: " << cogAvailable;
-	sout << "\n In Town: " << inTown;*/
+	sout << "\n In Town: " << inTown;
 
-	//DrawD3DFont(gameFont, sout.str().c_str(), 20, 20, RED_COL);
+	DrawD3DFont(gameFont, sout.str().c_str(), 20, 20, RED_COL);
 
 	//Display HP
 	stringstream soutHP;
@@ -431,6 +432,12 @@ void GameScene::CollisionCheck()
 		DeleteDeadMeshNodes(mpBoss->mBullets); //Delete destroyed boss bullets
 	}
 
+	//Collision between player and hut
+	if (CollisionMeshNode(&mpPlayer->mPlayer, mpHut))
+	{
+		mpPlayer->mPlayer.SetPos(lastPos);
+	}
+
 	DeleteDeadMeshNodes(mpPlayer->mFlames); //Delete dead flame mesh
 	DeleteDeadMeshNodes(mpPlayer->mRockets); //Delete dead bomb mesh
 	DeleteDeadEnemies(mEnemies); //Delete dead enemies
@@ -447,6 +454,7 @@ void GameScene::TalkToNpc()
 
 void GameScene::HandleInput(float dt)
 {
+	lastPos = mpPlayer->mPlayer.GetPos();
 	//Player
 	D3DXVECTOR3 move; //Player move vector
 	D3DXVECTOR3 turn = D3DXVECTOR3(0.f, 0.f, 0.f); //Turn vector
