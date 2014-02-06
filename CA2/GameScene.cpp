@@ -225,21 +225,21 @@ void GameScene::Draw(float dt)
 
 	//GetEngine()->DrawColourTint(D3DXCOLOR(0.4, 0, 0, (100 - mpPlayer->mPlayer.mLife) / 100));
 
-	stringstream sout;
-	sout << "Player pos: " << mpPlayer->mPlayer.GetPos();
-	sout << "Player hpr: " << mpPlayer->mPlayer.GetHpr();
-	sout << "\nNo of enemies: " << mEnemies.size();
-	sout << "\nCurrent time: " << clock();
-	sout << "\nClock: " << clock();
-	sout << "\n DT: " << dt;
-	sout << "\n FPS: " << GetEngine()->GetFps();
-	sout << "\n Health: " << mpPlayer->mPlayer.mLife;
-	sout << "\n boss Active: " << bossActive;
-	sout << "\n Boss Health: " << mpBoss->mLife;
-	sout << "\n Cogs Available: " << cogAvailable;
-	sout << "\n In Town: " << inTown;
+	//stringstream sout;
+	//sout << "Player pos: " << mpPlayer->mPlayer.GetPos();
+	//sout << "Player hpr: " << mpPlayer->mPlayer.GetHpr();
+	//sout << "\nNo of enemies: " << mEnemies.size();
+	//sout << "\nCurrent time: " << clock();
+	//sout << "\nClock: " << clock();
+	//sout << "\n DT: " << dt;
+	//sout << "\n FPS: " << GetEngine()->GetFps();
+	//sout << "\n Health: " << mpPlayer->mPlayer.mLife;
+	//sout << "\n boss Active: " << bossActive;
+	//sout << "\n Boss Health: " << mpBoss->mLife;
+	//sout << "\n Cogs Available: " << cogAvailable;
+	//sout << "\n In Town: " << inTown;
 
-	DrawD3DFont(gameFont, sout.str().c_str(), 20, 20, RED_COL);
+	//DrawD3DFont(gameFont, sout.str().c_str(), 20, 20, RED_COL);
 
 	//Display HP
 	stringstream soutHP;
