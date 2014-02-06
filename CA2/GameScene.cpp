@@ -70,11 +70,13 @@ void GameScene::Enter()
 	//Setup NPC
 	mpNPC = new NPC();
 	mpNPC->Init(mpNPCMesh);
-	mpNPC->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(66.0f, mpTerrain->GetHeight(66.0f, 498.0f), 498.0f)));
+	mpNPC->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(73.65f, mpTerrain->GetHeight(73.65f, 461.37f), 461.37f)));
+	mpNPC->SetHpr(D3DXVECTOR3(-0.09f, 2.35f, 0.0f));
 
 	mpHut = new NPC();
 	mpHut->Init(mpHutMesh);
-	mpHut->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(65.2f, mpTerrain->GetHeight(66.0f, 498.0f), 501.4f)));
+	mpHut->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(75.28f, mpTerrain->GetHeight(75.28f, 460.89f), 460.89f)));
+	mpHut->SetHpr(D3DXVECTOR3(-0.03f, -7.10f, 0.0f));
 
 	gameFont = CreateD3DFont(GetDevice(), "Segoe UI", 40, false);
 
@@ -112,8 +114,8 @@ void GameScene::Update(float dt)
 
 	if (maxEnemies < 25)
 	{
-		int x = randi(-10, 10);
-		int z = randi(-10, 10);
+		int x = randi(260, 320);
+		int z = randi(185, 245);
 
 		mpEnemy = new Enemy(mpEnemyBulletMesh, mpTerrain);
 		mpEnemy->Init(mpEnemyMesh);

@@ -31,7 +31,7 @@ public:
 	CParticleSystem* mRocketTrail;
 	CXMesh* mRocketMesh;
 	vector<CMeshNode*> mRockets;
-	const int rocket_CD = 3000;
+	const int rocket_CD = 5000;
 	clock_t rocket_used_time;
 	CExplosion* mRocketExplode;
 	bool rocketReady = true;
