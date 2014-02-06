@@ -1,7 +1,10 @@
 #pragma once
 #include "Scene.h"
+#include "SoundComponent.h"
 
 #define M_PI 3.14159265358979323846
+CSoundComponent* mpGameBGM;
+CSoundComponent* mpGameSFX;
 
 void GameScene::Enter()
 {
@@ -24,6 +27,10 @@ void GameScene::Enter()
 	mpCogWheelMesh = new CXMesh(GetDevice(), "../media/Model/Gear.x");
 	mpHutMesh = new CXMesh(GetDevice(), "../media/Model/Hut.X");
 	mpCrossHair = LoadSpriteTex(GetDevice(), "../media/crosshair.png");
+
+	mpGameBGM = GetEngine()->FindComponent<CSoundComponent>();
+	mpGameSFX = GetEngine()->FindComponent<CSoundComponent>();
+	mpGameBGM->PlayCue("GameBgm");
 
 	//Setup player and camera
 	mpPlayer = new Player(mpPlayerMesh, mpTerrain);
@@ -86,6 +93,8 @@ void GameScene::Update(float dt)
 	HandleInput(dt);
 	if (mpPlayer->mPlayer.mLife <= 0) //show death scene when player is dead
 	{
+		mpGameBGM->StopCue("GameBgm");
+		mpGameSFX->PlayCue("GameoverSound");
 		ExitScene();
 		GetEngine()->AddScene(new DeathScene());
 	}
@@ -280,12 +289,14 @@ void GameScene::CollisionCheck()
 			}
 		}
 
-		for (int b = 0; b < mpPlayer->mRockets.size(); b++) //Bomb hitting enemy
+		for (int b = 0; b < mpPlayer->mRockets.size(); b++) //Rocket hitting enemy
 		{
-			if (CollisionMeshNode(mpPlayer->mRockets[b], mEnemies[en])) //Collision between bom and enemy
+			if (CollisionMeshNode(mpPlayer->mRockets[b], mEnemies[en])) //Collision between rocket and enemy
 			{
 				mpPlayer->mRockets[b]->Destroy();
+				mpGameSFX->PlayCue("Explosion");
 				mEnemies[en]->Destroy();
+				mpGameSFX->PlayCue("DeathSound");
 				mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 50);
 			}
 		}
@@ -309,16 +320,18 @@ void GameScene::CollisionCheck()
 		}
 	}
 
-	for (int b = 0; b < mpPlayer->mRockets.size(); b++) //Bomb hitting ground
+	for (int b = 0; b < mpPlayer->mRockets.size(); b++) //Rocket hitting ground
 	{
 		if ((mpPlayer->mRockets[b]->GetPos().y) < (mpTerrain->GetHeight(mpPlayer->mRockets[b]->GetPos().x, mpPlayer->mRockets[b]->GetPos().z))) //collision between bomb and ground
 		{
 			mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 50);
 			mpPlayer->mRockets[b]->Destroy();
+			mpGameSFX->PlayCue("Explosion");
 		}
 
 		if (!mpPlayer->mRockets[b]->IsAlive())
 		{
+			mpGameSFX->PlayCue("Explosion");
 			mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(5.0f, 10.0f), 50);
 		}
 	}
@@ -329,6 +342,7 @@ void GameScene::CollisionCheck()
 		if (CollisionMeshNode(&mpPlayer->mPlayer, mCog[i]))
 		{
 			cogAvailable += mCog[i]->amount;
+			mpGameSFX->PlayCue("Cogs");
 			mCog[i]->Destroy();
 		}
 	}
@@ -347,7 +361,7 @@ void GameScene::CollisionCheck()
 			}
 		}
 
-		for (int b = 0; b < mpPlayer->mRockets.size(); b++) //Player's missle/bomb
+		for (int b = 0; b < mpPlayer->mRockets.size(); b++) //Player's missle/rocket
 		{
 			if (CollisionMeshNode(mpPlayer->mRockets[b], mpBoss))
 			{
@@ -412,6 +426,19 @@ void GameScene::HandleInput(float dt)
 		if (mpGamepad->GetRightTrigger(0) > 0)
 		{
 			mpPlayer->Shoot();
+
+			if (mpPlayer->currentWeapon == 1)
+			{
+				mpGameSFX->PlayCue("FlameSound");
+			}
+
+			if (mpPlayer->currentWeapon == 2)
+			{
+				if (mpPlayer->rocketReady == true)
+				{
+					mpGameSFX->PlayCue("MissileLaunch");
+				}
+			}
 		}
 		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_LEFT_SHOULDER))
 		{
@@ -460,6 +487,19 @@ void GameScene::HandleInput(float dt)
 		if (CGameWindow::KeyDown(VK_LBUTTON))
 		{
 			mpPlayer->Shoot();
+
+			if (mpPlayer->currentWeapon == 1)
+			{
+				mpGameSFX->PlayCue("FlameSound");
+			}
+
+			if (mpPlayer->currentWeapon == 2)
+			{
+				if (mpPlayer->rocketReady == true)
+				{
+					mpGameSFX->PlayCue("MissileLaunch");
+				}
+			}
 		}
 		if (CGameWindow::KeyPress('Q'))
 			TalkToNpc();

@@ -1,6 +1,8 @@
 #include "Scene.h"
+#include "SoundComponent.h"
 
 const POINT MENU_BUT = { 1100, 550 };
+CSoundComponent* mpDeathSFX;
 
 /// the help scene.
 /// displays instructions and a back button
@@ -18,6 +20,8 @@ void DeathScene::Enter()
 	mpButtonB = LoadSpriteTex(GetDevice(), "../media/scene/ButtonB.png");
 	mpBG = LoadSpriteTex(GetDevice(), "../media/scene/Lose.png");
 
+	mpDeathSFX = GetEngine()->FindComponent<CSoundComponent>();
+
 	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
 }
 void DeathScene::Update(float dt)
@@ -31,6 +35,7 @@ void DeathScene::Update(float dt)
 	if (mpGamepad->IsGamepadConnected(0))
 	{
 		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_B))
+			mpDeathSFX->PlayCue("ClickSound");
 			ExitScene();
 	}
 	else
@@ -40,6 +45,7 @@ void DeathScene::Update(float dt)
 			POINT mouse = CGameWindow::GetMousePos();
 			if (InSprite(mouse, MENU_BUT, mpButtonTex[0]))	// clicked the menu button
 			{
+				mpDeathSFX->PlayCue("ClickSound");
 				ExitScene();
 			}
 		}

@@ -1,4 +1,6 @@
 #include "Scene.h"
+#include "SoundComponent.h"
+#include "Player.h"
 
 const POINT PLAY_BUT = { 50, 525 },
 HELP_BUT = { 400, 525 },
@@ -6,6 +8,8 @@ CREDIT_BUT = { 750, 525 },
 EXIT_BUT = { 1100, 525 };
 
 int mousePos;
+CSoundComponent* mpMenuBGM;
+CSoundComponent* mpMenuSFX;
 
 void MenuScene::Enter()
 {
@@ -22,6 +26,10 @@ void MenuScene::Enter()
 	mpButtonTex[6] = LoadSpriteTex(GetDevice(), "../media/Scene/Exit1.png");
 	mpButtonTex[7] = LoadSpriteTex(GetDevice(), "../media/Scene/Exit2.png"); //Highlighted
 	mpBGTex = LoadSpriteTex(GetDevice(), "../media/Scene/MainBG.png");
+
+	mpMenuBGM = GetEngine()->FindComponent<CSoundComponent>();
+	mpMenuSFX = GetEngine()->FindComponent<CSoundComponent>();
+	mpMenuBGM->PlayCue("MenuBgm");
 
 	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
 	CGameWindow::SetMousePos(50, 525);
@@ -76,18 +84,23 @@ void MenuScene::Update(float dt)
 			POINT mouse = CGameWindow::GetMousePos();
 			if (InSprite(mouse, PLAY_BUT, mpButtonTex[0]))	// clicked the PLAY button
 			{
+				//mpMenuBGM->StopCue("MenuBgm");
+				mpMenuSFX->PlayCue("ClickSound");
 				GetEngine()->AddScene(new GameScene);
 			}
 			else if (InSprite(mouse, HELP_BUT, mpButtonTex[1]))	// clicked the HELP button
 			{
+				mpMenuSFX->PlayCue("ClickSound");
 				GetEngine()->AddScene(new HelpScene);
 			}
 			else if (InSprite(mouse, CREDIT_BUT, mpButtonTex[2]))	// clicked the CREDIT button
 			{
+				mpMenuSFX->PlayCue("ClickSound");
 				GetEngine()->AddScene(new CreditScene);
 			}
 			else if (InSprite(mouse, EXIT_BUT, mpButtonTex[3]))	// clicked the EXIT button
 			{
+				mpMenuSFX->PlayCue("ClickSound");
 				ExitScene();
 			}
 			leftClick = false;

@@ -27,13 +27,14 @@ public:
 	CXMesh* mFlameMesh; //Model for flames
 	vector<CMeshNode*> mFlames; //Vector for flame node
 	int flameThrowerLvl;
-	//Bomb
+	//Rocket
 	CParticleSystem* mRocketTrail;
 	CXMesh* mRocketMesh;
 	vector<CMeshNode*> mRockets;
 	const int rocket_CD = 3000;
 	clock_t rocket_used_time;
 	CExplosion* mRocketExplode;
+	bool rocketReady = true;
 	
 	int currentWeapon;
 

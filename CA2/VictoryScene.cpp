@@ -1,6 +1,8 @@
 #include "Scene.h"
+#include "SoundComponent.h"
 
 const POINT MENU_BUT = { 1100, 550 };
+CSoundComponent* mpVictorySFX;
 
 /// the help scene.
 /// displays instructions and a back button
@@ -18,6 +20,8 @@ void VictoryScene::Enter()
 	mpBG = LoadSpriteTex(GetDevice(), "../media/scene/Win.png"); //Win background
 	mpButtonB = LoadSpriteTex(GetDevice(), "../media/scene/ButtonB.png"); //B button
 
+	mpVictorySFX = GetEngine()->FindComponent<CSoundComponent>();
+
 	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
 }
 void VictoryScene::Update(float dt)
@@ -31,6 +35,7 @@ void VictoryScene::Update(float dt)
 	if (mpGamepad->IsGamepadConnected(0))
 	{
 		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_B))
+			mpVictorySFX->PlayCue("ClickSound");
 			ExitScene();
 	}
 	else
@@ -40,6 +45,7 @@ void VictoryScene::Update(float dt)
 			POINT mouse = CGameWindow::GetMousePos();
 			if (InSprite(mouse, MENU_BUT, mpButtonTex[0]))	// clicked the menu button
 			{
+				mpVictorySFX->PlayCue("ClickSound");
 				ExitScene();
 			}
 		}

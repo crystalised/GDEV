@@ -12,12 +12,21 @@ Options
 Global Settings
 {
     Xbox File = Xbox\Audio.xgs;
+<<<<<<< HEAD
+    Windows File = Win\Audio.xgs;
+    Header File = Audio.h;
+    Exclude Category Names = 0;
+    Exclude Variable Names = 0;
+    Last Modified Low = 0;
+    Last Modified High = 0;
+=======
     Windows File = Audio.xgs;
     Header File = Audio.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
     Last Modified Low = 780351767;
     Last Modified High = 30352107;
+>>>>>>> 759082d4cb6cc0359dc7801b626bceb6c719ddb5
 
     Category
     {
@@ -215,6 +224,8 @@ Global Settings
         Max = 1000000.000000;
     }
 }
+<<<<<<< HEAD
+=======
 
 Wave Bank
 {
@@ -1327,3 +1338,4 @@ Sound Bank
         }
     }
 }
+>>>>>>> 759082d4cb6cc0359dc7801b626bceb6c719ddb5

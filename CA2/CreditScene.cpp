@@ -1,6 +1,8 @@
 #include "Scene.h"
+#include "SoundComponent.h"
 
 const POINT BACK_BUT = { 1100, 550 };
+CSoundComponent* mpCreditSFX;
 
 /// the credit scene.
 /// displays credits and a back button
@@ -18,6 +20,8 @@ void CreditScene::Enter()
 	mpBG = LoadSpriteTex(GetDevice(), "../media/scene/Credits.png");
 	mpButtonB = LoadSpriteTex(GetDevice(), "../media/scene/ButtonB.png");
 
+	mpCreditSFX = GetEngine()->FindComponent<CSoundComponent>();
+
 	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
 }
 void CreditScene::Update(float dt)
@@ -28,6 +32,7 @@ void CreditScene::Update(float dt)
 	if (mpGamepad->IsGamepadConnected(0))
 	{
 		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_B))
+			mpCreditSFX->PlayCue("ClickSound");
 			ExitScene();
 	}
 
@@ -39,6 +44,7 @@ void CreditScene::Update(float dt)
 		POINT mouse = CGameWindow::GetMousePos();
 		if (InSprite(mouse, BACK_BUT, mpButtonTex[0]))	// clicked the button
 		{
+			mpCreditSFX->PlayCue("ClickSound");
 			ExitScene();
 		}
 	}

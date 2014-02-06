@@ -1,6 +1,8 @@
 #include "Scene.h"
+#include "SoundComponent.h"
 
 const POINT BACK_BUT = { 1100, 550 };
+CSoundComponent* mpHelpSFX;
 
 /// the help scene.
 /// displays instructions and a back button
@@ -18,6 +20,8 @@ void HelpScene::Enter()
 	mpBG2 = LoadSpriteTex(GetDevice(), "../media/scene/HelpKeyboard.png"); //Keyboard & mouse
 	mpButtonB = LoadSpriteTex(GetDevice(), "../media/scene/ButtonB.png"); //B button
 
+	mpHelpSFX = GetEngine()->FindComponent<CSoundComponent>();
+
 	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
 }
 void HelpScene::Update(float dt)
@@ -31,6 +35,7 @@ void HelpScene::Update(float dt)
 	if (mpGamepad->IsGamepadConnected(0))
 	{
 		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_B))
+			mpHelpSFX->PlayCue("ClickSound");
 			ExitScene();
 	}
 	if (CGameWindow::KeyPress(VK_LBUTTON))
@@ -38,6 +43,7 @@ void HelpScene::Update(float dt)
 		POINT mouse = CGameWindow::GetMousePos();
 		if (InSprite(mouse, BACK_BUT, mpButtonTex[0]))	// clicked the button
 		{
+			mpHelpSFX->PlayCue("ClickSound");
 			ExitScene();
 		}
 	}

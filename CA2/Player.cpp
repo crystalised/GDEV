@@ -147,6 +147,7 @@ void Player::Shoot()
 	case 2:
 		if (clock() - rocket_used_time > rocket_CD)
 		{
+			rocketReady = true;
 			D3DXVECTOR3 FORWARD(0, 0, 1.0f); //Direction of particles
 			vel = mPlayer.RotateVector(FORWARD);
 			vel *= 25;
@@ -160,6 +161,10 @@ void Player::Shoot()
 			mRockets.push_back(shot);
 			rocket_used_time = clock();
 			break;
+		}
+		else
+		{
+			rocketReady = false;
 		}
 	}
 }
