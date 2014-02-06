@@ -76,7 +76,7 @@ void GameScene::Enter()
 	mpHut->Init(mpHutMesh);
 	mpHut->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(65.2f, mpTerrain->GetHeight(66.0f, 498.0f), 501.4f)));
 
-	gameFont = CreateD3DFont(GetDevice(), "Segoe UI", 24, false);
+	gameFont = CreateD3DFont(GetDevice(), "Segoe UI", 40, false);
 
 	inTown = true;
 	tele_used_time = 0;
@@ -222,7 +222,7 @@ void GameScene::Draw(float dt)
 
 	//GetEngine()->DrawColourTint(D3DXCOLOR(0.4, 0, 0, (100 - mpPlayer->mPlayer.mLife) / 100));
 
-	stringstream sout;
+	/*stringstream sout;
 	sout << "Player pos: " << mpPlayer->mPlayer.GetPos();
 	sout << "Player hpr: " << mpPlayer->mPlayer.GetHpr();
 	sout << "\nNo of enemies: " << mEnemies.size();
@@ -234,9 +234,40 @@ void GameScene::Draw(float dt)
 	sout << "\n boss Active: " << bossActive;
 	sout << "\n Boss Health: " << mpBoss->mLife;
 	sout << "\n Cogs Available: " << cogAvailable;
-	sout << "\n In Town: " << inTown;
+	sout << "\n In Town: " << inTown;*/
 
 	//DrawD3DFont(gameFont, sout.str().c_str(), 20, 20, RED_COL);
+
+	//Display HP
+	stringstream soutHP;
+	soutHP << mpPlayer->mPlayer.mLife;
+	DrawD3DFont(gameFont, soutHP.str().c_str(), 100, 23, BLACK_COL);
+	DrawD3DFont(gameFont, soutHP.str().c_str(), 101, 24, WHITE_COL);
+
+	//Display Cogs Obtained
+	stringstream soutCOGS;
+	soutCOGS << cogAvailable;
+	DrawD3DFont(gameFont, soutCOGS.str().c_str(), 1080, 24, BLACK_COL);
+	DrawD3DFont(gameFont, soutCOGS.str().c_str(), 1081, 25, WHITE_COL);
+
+	//Display Missile Cooldown not working yet
+	stringstream soutMCD;
+	if (mpPlayer->rocketReady)
+	{
+		soutMCD << "Yes";
+	}
+	else
+	{
+		soutMCD << "No";
+	}
+	DrawD3DFont(gameFont, soutMCD.str().c_str(), 1129, 610, BLACK_COL);
+	DrawD3DFont(gameFont, soutMCD.str().c_str(), 1130, 611, WHITE_COL);
+
+	//Display Teleport Cooldown
+	stringstream soutTCD;
+	soutTCD << cogAvailable; //Temp value in place of the actual teleport cooldown
+	DrawD3DFont(gameFont, soutTCD.str().c_str(), 1129, 663, BLACK_COL);
+	DrawD3DFont(gameFont, soutTCD.str().c_str(), 1130, 664, WHITE_COL);
 
 	GetSprite()->Begin(D3DXSPRITE_ALPHABLEND);
 	DrawSprite(GetSprite(), mpUI, 0, 0);
