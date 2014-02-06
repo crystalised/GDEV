@@ -63,6 +63,9 @@ class GameScene : public CScene
 	ID3DXFont* gameFont;
 
 	IDirect3DTexture9* mpCrossHair; //Cross hair for aiming
+	IDirect3DTexture9* mpUI; //User Interface
+	IDirect3DTexture9* mpMissileIcon; //Icon for Missile
+	IDirect3DTexture9* mpFireIcon; //icon for Flamethrower
 
 public:
 	void Enter();

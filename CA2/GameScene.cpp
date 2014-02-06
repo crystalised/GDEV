@@ -27,6 +27,9 @@ void GameScene::Enter()
 	mpCogWheelMesh = new CXMesh(GetDevice(), "../media/Model/Gear.x");
 	mpHutMesh = new CXMesh(GetDevice(), "../media/Model/Hut.X");
 	mpCrossHair = LoadSpriteTex(GetDevice(), "../media/crosshair.png");
+	mpUI = LoadSpriteTex(GetDevice(), "../media/Scene/UI.png");
+	mpMissileIcon = LoadSpriteTex(GetDevice(), "../media/Scene/Missile.png");
+	mpFireIcon = LoadSpriteTex(GetDevice(), "../media/Scene/Flame.png");
 
 	mpGameBGM = GetEngine()->FindComponent<CSoundComponent>();
 	mpGameSFX = GetEngine()->FindComponent<CSoundComponent>();
@@ -83,6 +86,8 @@ void GameScene::Enter()
 void GameScene::Update(float dt)
 {
 	CScene::Update(dt);	// VITAL
+
+	//ShowCursor(false);
 
 	if (IsTopMost() == false) //Pause scene if not top most
 		return;
@@ -231,10 +236,21 @@ void GameScene::Draw(float dt)
 	sout << "\n Cogs Available: " << cogAvailable;
 	sout << "\n In Town: " << inTown;
 
-	DrawD3DFont(gameFont, sout.str().c_str(), 20, 20, RED_COL);
+	//DrawD3DFont(gameFont, sout.str().c_str(), 20, 20, RED_COL);
 
 	GetSprite()->Begin(D3DXSPRITE_ALPHABLEND);
+	DrawSprite(GetSprite(), mpUI, 0, 0);
 	DrawSprite(GetSprite(), mpCrossHair, 0, 0);
+
+	if (mpPlayer->currentWeapon == 1)
+	{
+		DrawSprite(GetSprite(), mpFireIcon, 0, 0);
+	}
+	else
+	{
+		DrawSprite(GetSprite(), mpMissileIcon, 0, 0);
+	}
+
 	GetSprite()->End();
 
 	GetDevice()->EndScene();
