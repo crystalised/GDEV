@@ -71,6 +71,8 @@ class GameScene : public CScene
 	IDirect3DTexture9* mpUI; //User Interface
 	IDirect3DTexture9* mpMissileIcon; //Icon for Missile
 	IDirect3DTexture9* mpFireIcon; //icon for Flamethrower
+	IDirect3DTexture9* mpBossUI;
+	IDirect3DTexture9* mpCogGUI;
 
 public:
 	void Enter();
@@ -81,7 +83,6 @@ public:
 	static bool GetQuestStatus();
 
 private:
-	IDirect3DTexture9* mpCogGUI;
 	void CollisionCheck();
 	void TalkToNpc();
 	void HandleInput(float dt);

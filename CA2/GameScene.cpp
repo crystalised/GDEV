@@ -31,6 +31,7 @@ void GameScene::Enter()
 	mpMissileIcon = LoadSpriteTex(GetDevice(), "../media/Scene/Missile.png");
 	mpFireIcon = LoadSpriteTex(GetDevice(), "../media/Scene/Flame.png");
 	mpCogGUI = LoadSpriteTex(GetDevice(), "../media/Scene/Cogs.png");
+	mpBossUI = LoadSpriteTex(GetDevice(), "../media/Scene/BossHp.png");
 
 	mpGameBGM = GetEngine()->FindComponent<CSoundComponent>();
 	mpGameSFX = GetEngine()->FindComponent<CSoundComponent>();
@@ -273,7 +274,7 @@ void GameScene::Draw(float dt)
 	DrawD3DFont(gameFont, soutHP.str().c_str(), 100, 23, BLACK_COL);
 	DrawD3DFont(gameFont, soutHP.str().c_str(), 101, 24, WHITE_COL);
 
-	//Display Missile Cooldown not working yet
+	//Display Missile Cooldown
 	stringstream soutMCD;
 	if (mpPlayer->rocketReady)
 	{
@@ -300,7 +301,16 @@ void GameScene::Draw(float dt)
 	DrawSprite(GetSprite(), mpCrossHair, 0, 0);
 
 	//Display Cogs Obtained only when in quest
-	if (inQuest)
+	if (bossActive)
+	{
+		stringstream soutBHP;
+		soutBHP << mpBoss->mLife;
+		DrawD3DFont(gameFont, soutBHP.str().c_str(), 780, 23, BLACK_COL);
+		DrawD3DFont(gameFont, soutBHP.str().c_str(), 781, 24, WHITE_COL);
+		DrawSprite(GetSprite(), mpBossUI, 0, 0);
+	}
+
+	if (inQuest && !bossActive)
 	{
 		stringstream soutCOGS;
 		soutCOGS << cogObtained << " / 50";
