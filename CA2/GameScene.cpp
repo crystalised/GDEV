@@ -220,7 +220,7 @@ void GameScene::Draw(float dt)
 {
 	mCamera.SetMatrixes(GetDevice());
 	// Clear the backbuffer to a black color
-	GetDevice()->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, BLACK_COL, 1.0f, 0);
+	GetDevice()->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, SKY_COL, 1.0f, 0);
 	GetDevice()->BeginScene();
 
 	// the terrain
