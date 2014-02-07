@@ -62,7 +62,6 @@ class GameScene : public CScene
 	static const int tele_CD = 15000;
 	clock_t tele_used_time;
 	bool teleportToBoss;
-
 	bool teleAvailable;
 
 	ID3DXFont* gameFont;

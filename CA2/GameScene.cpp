@@ -526,12 +526,19 @@ void GameScene::HandleInput(float dt)
 	{
 		move = mpGamepad->GetVector(0, LEFT_X, NONE, LEFT_Y);
 		turn = mpGamepad->GetVector(0, RIGHT_Y_INV, RIGHT_X, NONE) / 5; //reduce sensitivity
-		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_A))
+		if (mpGamepad->IsButtonPressed2(0, XINPUT_GAMEPAD_A))
 			mpPlayer->Jump();
 		if (mpGamepad->GetLeftTrigger(0) > 0)
 			mpPlayer->SPEED = 20.0f;
 		else
 			mpPlayer->SPEED = 10.0f;
+		if (mpGamepad->IsButtonPressed3(0, XINPUT_GAMEPAD_BACK))
+		{
+			if (mCamera.mMode == 1)
+				mCamera.mMode = 0;
+			else
+				mCamera.mMode = 1;
+		}
 
 		if (mpGamepad->GetRightTrigger(0) > 0)
 		{
