@@ -20,18 +20,18 @@ class Boss : public CMeshNode
 	enum STATE { IDLING, CHASING, ATTACKING };
 	static const int ATTACK_RANGE = 25; //Boss attack range
 	static const int DETECTION_RANGE = 50; //Boss detection of player range
-	const float SPEED = 6.0f; //Speed of boss movement
-	const float TURN = 3.0f; //Speed of boss turn
+	static const int SPEED = 6; //Speed of boss movement
+	static const int TURN = 3; //Speed of boss turn
 
 public:
 	CTerrain* mTerrain;
 	//Boss weapon
 	CXMesh* mBulletMesh; //Model for Bullet
 	vector<CMeshNode*> mBullets; //Vector for bullet node
-	int gun_CD = 1000;
+	int gun_CD;
 	clock_t gun_used_time;
 
-	const float groundOffset = 0; //Offset for boss from ground
+	static const int groundOffset = 0; //Offset for boss from ground
 	D3DXVECTOR3 flameDirection;
 
 public:

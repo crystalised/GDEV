@@ -5,6 +5,7 @@ Boss::Boss(CXMesh* inBulletMesh, CTerrain* inTerrain)
 	mTerrain = inTerrain;
 	flameDirection = D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 1.0f, 0.2f) * (CParticleSystem::GetRandomFloat(0.2f, 1.0f) * 10);
 	bossState = IDLING;
+	gun_CD = 1000;
 
 	//Init boss weapon
 	mBulletMesh = inBulletMesh;
@@ -66,7 +67,7 @@ void Boss::Update(float dt, CMeshNode* inPlayer)
 				mBullets.push_back(shot);
 				if (mLife <= 500)
 				{
-					gun_CD = 700;
+					gun_CD = 700.0f;
 					FORWARD = D3DXVECTOR3(CParticleSystem::GetRandomFloat(0.2, 0.5), 0, 1);
 					D3DXVECTOR3 vel2 = RotateVector(FORWARD);
 					vel2 *= 25;
@@ -78,7 +79,7 @@ void Boss::Update(float dt, CMeshNode* inPlayer)
 					shot2->mLife = 3000;
 					mBullets.push_back(shot2);
 
-					FORWARD = D3DXVECTOR3(-CParticleSystem::GetRandomFloat(0.2, 0.5), 0, 1);
+					FORWARD = D3DXVECTOR3(-CParticleSystem::GetRandomFloat(0.2f, 0.5f), 0.0f, 1.0f);
 					D3DXVECTOR3 vel3 = RotateVector(FORWARD);
 					vel3 *= 25;
 					CShot* shot3 = new CShot();

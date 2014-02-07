@@ -20,18 +20,18 @@ class Enemy : public CMeshNode
 	enum STATE {IDLING, CHASING, ATTACKING};
 	static const int ATTACK_RANGE = 15; //Enemy attack range
 	static const int DETECTION_RANGE = 30; //Enemy detection of player range
-	const float SPEED = 3.0f; //Speed of enemy movement
-	const float TURN = 2.0f; //Speed of enemy turn
+	static const int SPEED = 3.0f; //Speed of enemy movement
+	static const int TURN = 2.0f; //Speed of enemy turn
 
 public:
 	CTerrain* mTerrain;
 	//Enemy weapon
 	CXMesh* mBulletMesh; //Model for Bullet
 	vector<CMeshNode*> mBullets; //Vector for bullet node
-	const int gun_CD = 2000;
+	static const int gun_CD = 2000;
 	clock_t gun_used_time;
 
-	const float groundOffset = 0; //Offset for enemy from ground
+	static const int groundOffset = 0; //Offset for enemy from ground
 	D3DXVECTOR3 flameDirection;
 
 public:

@@ -35,8 +35,10 @@ void VictoryScene::Update(float dt)
 	if (mpGamepad->IsGamepadConnected(0))
 	{
 		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_B))
+		{
 			mpVictorySFX->PlayCue("ClickSound");
 			ExitScene();
+		}
 	}
 	else
 	{

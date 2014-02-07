@@ -44,6 +44,7 @@ public:
 	//bool ButtonPress(int buttId);
 	bool IsButtonPressed(int gamepadID, int buttonId);
 	bool IsButtonPressed2(int gamepadID, int buttonId);
+	bool IsButtonPressed3(int gamepadID, int buttonId);
 
 	/// Calls GetAxis() to make a Vector3
 	D3DXVECTOR3 GetVector(int gamepadID, AXIS_ENUM axisX, AXIS_ENUM axisY, AXIS_ENUM axisZ);
@@ -66,6 +67,7 @@ protected: // data
 	CONTROLLER_STATE g_Controllers[MAX_CONTROLLERS];
 	bool    g_bDeadZoneOn; // turn on Dead Zones by default
 	bool buttonDown2;
+	bool buttonDown3;
 	bool buttonPrevState;
 	bool buttonCurrState;
 };

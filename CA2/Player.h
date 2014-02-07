@@ -31,22 +31,22 @@ public:
 	CParticleSystem* mRocketTrail;
 	CXMesh* mRocketMesh;
 	vector<CMeshNode*> mRockets;
-	const int rocket_CD = 5000;
+	static const int rocket_CD = 5000;
 	clock_t rocket_used_time;
 	CExplosion* mRocketExplode;
-	bool rocketReady = true;
+	bool rocketReady;
 	
 	int currentWeapon;
 
-	float SPEED = 10.0f; //Speed of player movement
-	const float turn = D2R(500); //Speed of player camera turn
-	const float groundOffset = 0; //Offset for player from ground
+	int SPEED; //Speed of player movement
+	float turn; //Speed of player camera turn
+	float groundOffset; //Offset for player from ground
 
 	//Player state for jumping motion
 	enum STATE { JUMPING, FALLING, STANDING };
 	STATE playerState;
 	float jumpHeight; //Height the player jumps up to
-	D3DXVECTOR3 gravity = D3DXVECTOR3(0, 9.81f, 0);
+	D3DXVECTOR3 gravity;
 
 public:
 	Player(CXMesh* inPlayerMesh, CTerrain* inTerrain); //input player mesh and terrain to initialze player

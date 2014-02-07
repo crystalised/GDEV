@@ -30,7 +30,7 @@ void GameScene::Enter()
 	mpUI = LoadSpriteTex(GetDevice(), "../media/Scene/UI.png");
 	mpMissileIcon = LoadSpriteTex(GetDevice(), "../media/Scene/Missile.png");
 	mpFireIcon = LoadSpriteTex(GetDevice(), "../media/Scene/Flame.png");
-	mpCogsUI = LoadSpriteTex(GetDevice(), "../media/Scene/Cogs.png");
+	mpCogGUI = LoadSpriteTex(GetDevice(), "../media/Scene/Cogs.png");
 
 	mpGameBGM = GetEngine()->FindComponent<CSoundComponent>();
 	mpGameSFX = GetEngine()->FindComponent<CSoundComponent>();
@@ -42,7 +42,7 @@ void GameScene::Enter()
 	mCamera.SetHpr(D3DXVECTOR3(0.05, 2.35, 0.00));
 	mpPlayer->mPlayer.SetHpr(mCamera.GetHpr());
 	mCamera.mMode = 1;
-	cogAvailable = 0;
+	cogObtained = 0;
 	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
 
 	//Setup enemies
@@ -82,6 +82,8 @@ void GameScene::Enter()
 
 	gameFont = CreateD3DFont(GetDevice(), "Segoe UI", 40, false);
 
+	teleAvailable = false;
+
 	inTown = true;
 	tele_used_time = 0;
 	teleportToBoss = false;
@@ -102,11 +104,24 @@ void GameScene::Update(float dt)
 	HandleInput(dt);
 	if (mpPlayer->mPlayer.mLife <= 0) //show death scene when player is dead
 	{
+		inQuest = false;
 		ExitScene();
 		GetEngine()->AddScene(new DeathScene());
 		mpGameBGM->StopCue("GameBgm");
 		mpGameSFX->PlayCue("GameoverSound");
 	}
+
+	//Quest
+	inQuest = NPCScene::GetQuestStatus();
+
+	if (!bossActive)
+		teleportToBoss = NPCScene::TeleToBoss();
+
+	//Teleport
+	if (clock() - tele_used_time > tele_CD)
+		teleAvailable = false;
+	else
+		teleAvailable = true;
 
 	//Update weather
 	mpWeather->SetCentre(mCamera.GetPos());
@@ -224,35 +239,30 @@ void GameScene::Draw(float dt)
 	//Items
 	DrawItems(mCog);
 
-	//GetEngine()->DrawColourTint(D3DXCOLOR(0.4, 0, 0, (100 - mpPlayer->mPlayer.mLife) / 100));
+	GetEngine()->DrawColourTint(D3DXCOLOR(0.4, 0, 0, (100 - mpPlayer->mPlayer.mLife) / 100));
 
-	//stringstream sout;
-	//sout << "Player pos: " << mpPlayer->mPlayer.GetPos();
-	//sout << "Player hpr: " << mpPlayer->mPlayer.GetHpr();
-	//sout << "\nNo of enemies: " << mEnemies.size();
-	//sout << "\nCurrent time: " << clock();
-	//sout << "\nClock: " << clock();
-	//sout << "\n DT: " << dt;
-	//sout << "\n FPS: " << GetEngine()->GetFps();
-	//sout << "\n Health: " << mpPlayer->mPlayer.mLife;
-	//sout << "\n boss Active: " << bossActive;
-	//sout << "\n Boss Health: " << mpBoss->mLife;
-	//sout << "\n Cogs Available: " << cogAvailable;
-	//sout << "\n In Town: " << inTown;
+	stringstream sout;
+	sout << "Player pos: " << mpPlayer->mPlayer.GetPos();
+	sout << "Player hpr: " << mpPlayer->mPlayer.GetHpr();
+	sout << "\nNo of enemies: " << mEnemies.size();
+	sout << "\nCurrent time: " << clock();
+	sout << "\nClock: " << clock();
+	sout << "\n DT: " << dt;
+	sout << "\n FPS: " << GetEngine()->GetFps();
+	sout << "\n Health: " << mpPlayer->mPlayer.mLife;
+	sout << "\n boss Active: " << bossActive;
+	sout << "\n Boss Health: " << mpBoss->mLife;
+	sout << "\n Cogs Available: " << cogObtained;
+	sout << "\n Tele to boss: " << teleportToBoss;
+	sout << "\n In Quest: " << inQuest;
 
-	//DrawD3DFont(gameFont, sout.str().c_str(), 20, 20, RED_COL);
+	DrawD3DFont(gameFont, sout.str().c_str(), 20, 20, RED_COL);
 
 	//Display HP
 	stringstream soutHP;
 	soutHP << mpPlayer->mPlayer.mLife;
 	DrawD3DFont(gameFont, soutHP.str().c_str(), 100, 23, BLACK_COL);
 	DrawD3DFont(gameFont, soutHP.str().c_str(), 101, 24, WHITE_COL);
-
-	//Display Cogs Obtained
-	stringstream soutCOGS;
-	soutCOGS << cogAvailable;
-	DrawD3DFont(gameFont, soutCOGS.str().c_str(), 1080, 24, BLACK_COL);
-	DrawD3DFont(gameFont, soutCOGS.str().c_str(), 1081, 25, WHITE_COL);
 
 	//Display Missile Cooldown not working yet
 	stringstream soutMCD;
@@ -269,14 +279,26 @@ void GameScene::Draw(float dt)
 
 	//Display Teleport Cooldown
 	stringstream soutTCD;
-	soutTCD << cogAvailable; //Temp value in place of the actual teleport cooldown
+	if (teleAvailable)
+		soutTCD << "Yes"; //Temp value in place of the actual teleport cooldown
+	else
+		soutTCD << "No";
 	DrawD3DFont(gameFont, soutTCD.str().c_str(), 1129, 663, BLACK_COL);
 	DrawD3DFont(gameFont, soutTCD.str().c_str(), 1130, 664, WHITE_COL);
 
 	GetSprite()->Begin(D3DXSPRITE_ALPHABLEND);
 	DrawSprite(GetSprite(), mpUI, 0, 0);
-	DrawSprite(GetSprite(), mpCogsUI, 0, 0);
 	DrawSprite(GetSprite(), mpCrossHair, 0, 0);
+
+	//Display Cogs Obtained only when in quest
+	if (inQuest)
+	{
+		stringstream soutCOGS;
+		soutCOGS << cogObtained << " / 50";
+		DrawD3DFont(gameFont, soutCOGS.str().c_str(), 1080, 24, BLACK_COL);
+		DrawD3DFont(gameFont, soutCOGS.str().c_str(), 1081, 25, WHITE_COL);
+		DrawSprite(GetSprite(), mpCogGUI, 0, 0);
+	}
 
 	if (mpPlayer->currentWeapon == 1)
 	{
@@ -372,7 +394,7 @@ void GameScene::CollisionCheck()
 		}
 	}
 
-	for (int b = 0; b < mpPlayer->mRockets.size(); b++) //Rocket hitting ground
+	for (int b = 0; b < mpPlayer->mRockets.size(); b++) //Rocket
 	{
 		if ((mpPlayer->mRockets[b]->GetPos().y) < (mpTerrain->GetHeight(mpPlayer->mRockets[b]->GetPos().x, mpPlayer->mRockets[b]->GetPos().z))) //collision between bomb and ground
 		{
@@ -381,10 +403,17 @@ void GameScene::CollisionCheck()
 			mpGameSFX->PlayCue("Explosion");
 		}
 
-		if (!mpPlayer->mRockets[b]->IsAlive())
+		if (!mpPlayer->mRockets[b]->IsAlive()) //rocket boom in air
 		{
 			mpGameSFX->PlayCue("Explosion");
 			mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(5.0f, 10.0f), 50);
+		}
+
+		if (CollisionMeshNode(mpPlayer->mRockets[b], mpHut)) //rocket and hut
+		{
+			mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 50);
+			mpPlayer->mRockets[b]->Destroy();
+			mpGameSFX->PlayCue("Explosion");
 		}
 	}
 
@@ -393,7 +422,7 @@ void GameScene::CollisionCheck()
 	{
 		if (CollisionMeshNode(&mpPlayer->mPlayer, mCog[i]))
 		{
-			cogAvailable += mCog[i]->amount;
+			cogObtained += mCog[i]->amount;
 			mpGameSFX->PlayCue("Cogs");
 			mCog[i]->Destroy();
 		}
@@ -471,6 +500,9 @@ void GameScene::HandleInput(float dt)
 	if (CGameWindow::KeyPress(VK_F7))
 		bossSpawnMinions = true;
 
+	if (CGameWindow::KeyPress(VK_F6))
+		cogObtained = 50;
+
 	if (mpGamepad->IsGamepadConnected(0))
 	{
 		move = mpGamepad->GetVector(0, LEFT_X, NONE, LEFT_Y);
@@ -512,7 +544,7 @@ void GameScene::HandleInput(float dt)
 			TalkToNpc();
 		}
 
-		if (mpGamepad->IsButtonPressed2(0, XINPUT_GAMEPAD_START  && inQuest))
+		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_START))
 		{
 			if (clock() - tele_used_time > tele_CD)
 			{
@@ -584,4 +616,14 @@ void GameScene::HandleInput(float dt)
 
 	mpPlayer->mPlayer.mHpr.x = (float)__max(-limit, mpPlayer->mPlayer.mHpr.x);
 	mpPlayer->mPlayer.mHpr.x = (float)__min(+limit, mpPlayer->mPlayer.mHpr.x);
+}
+
+int GameScene::GetCogObtained()
+{
+	return cogObtained;
+}
+
+bool GameScene::GetQuestStatus()
+{
+	return inQuest;
 }

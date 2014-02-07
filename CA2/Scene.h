@@ -1,8 +1,10 @@
 #pragma once
 #include "CameraUtils.h"
 
-static int cogAvailable;
+static int cogObtained;
 static bool inQuest; //Whether player is in quest
+static bool questComplete; //Whether quest is completed
+static bool teleportToBoss;
 
 //Graphics
 static ID3DXFont* mpFont;
@@ -57,25 +59,29 @@ class GameScene : public CScene
 	vector<Item*> mCog;
 
 	bool inTown;
-	const int tele_CD = 15000;
+	static const int tele_CD = 15000;
 	clock_t tele_used_time;
 	bool teleportToBoss;
+
+	bool teleAvailable;
 
 	ID3DXFont* gameFont;
 
 	IDirect3DTexture9* mpCrossHair; //Cross hair for aiming
 	IDirect3DTexture9* mpUI; //User Interface
 	IDirect3DTexture9* mpMissileIcon; //Icon for Missile
-	IDirect3DTexture9* mpFireIcon; //Icon for Flamethrower
-	IDirect3DTexture9* mpCogsUI; //Icon for Cogs
+	IDirect3DTexture9* mpFireIcon; //icon for Flamethrower
 
 public:
 	void Enter();
 	void Update(float dt);
 	void Draw(float dt);
 	void Leave();
+	static int GetCogObtained();
+	static bool GetQuestStatus();
 
 private:
+	IDirect3DTexture9* mpCogGUI;
 	void CollisionCheck();
 	void TalkToNpc();
 	void HandleInput(float dt);
@@ -139,11 +145,13 @@ public:
 	void Update(float dt);
 	void Draw(float dt);
 	void Leave();
+	static bool GetQuestStatus();
+	static bool TeleToBoss();
 
 private:
 	POINT mousepos;
-	IDirect3DTexture9* mpBackground[4];
-	IDirect3DTexture9* mpButtonTex[4];
+	IDirect3DTexture9* mpBackground[5];
+	IDirect3DTexture9* mpButtonTex[10];
 	IDirect3DTexture9* mpButtonA;
 	int questStage;
 };

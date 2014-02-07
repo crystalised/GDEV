@@ -32,8 +32,10 @@ void CreditScene::Update(float dt)
 	if (mpGamepad->IsGamepadConnected(0))
 	{
 		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_B))
+		{
 			mpCreditSFX->PlayCue("ClickSound");
 			ExitScene();
+		}
 	}
 
 	// WARNING: you cannot have two calls to KeyPress for the same key within a function

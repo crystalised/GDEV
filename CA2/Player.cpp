@@ -9,6 +9,11 @@ Player::Player(CXMesh* inPlayerMesh, CTerrain* inTerrain) //Input player mesh an
 	playerState = STANDING; //Player default state is standing
 	currentWeapon = 1; //Player default weapon is flame thrower(1)
 	rocket_used_time = 0;
+	rocketReady = true;
+	turn = D2R(500); //Speed of player camera turn
+	SPEED = 10.0f;
+	groundOffset = 0; //Offset for player from ground
+	gravity = D3DXVECTOR3(0, 9.81f, 0);
 }
 
 Player::~Player()
@@ -45,9 +50,9 @@ void Player::Update(float dt) //Update player based on input
 	}
 
 	if (clock() - rocket_used_time > rocket_CD)
-		rocketReady = true;
-	else
 		rocketReady = false;
+	else
+		rocketReady = true;
 
 }
 
@@ -119,7 +124,7 @@ void Player::Jump()
 	CGameWindow::ClearKeyPress();
 	if (playerState == STANDING)
 	{
-		jumpHeight = mPlayer.GetPos().y + 4;
+		jumpHeight = mPlayer.GetPos().y + 2.5;
 		playerState = JUMPING;
 	}
 }

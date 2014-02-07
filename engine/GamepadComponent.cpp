@@ -105,6 +105,20 @@ bool CGamepadComponent::IsButtonPressed2(int gamepadID, int buttonId)
 		return false;
 }
 
+bool CGamepadComponent::IsButtonPressed3(int gamepadID, int buttonId)
+{
+	if (!IsButtonDown(gamepadID, buttonId))
+		buttonDown3 = false;
+
+	if (IsButtonDown(gamepadID, buttonId) && buttonDown3 == false)
+	{
+		buttonDown3 = true;
+		return true;
+	}
+	else
+		return false;
+}
+
 D3DXVECTOR3 CGamepadComponent::GetVector(int gamepadID, AXIS_ENUM axisX, AXIS_ENUM axisY, AXIS_ENUM axisZ)
 {
 

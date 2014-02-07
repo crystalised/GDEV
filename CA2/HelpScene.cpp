@@ -35,8 +35,10 @@ void HelpScene::Update(float dt)
 	if (mpGamepad->IsGamepadConnected(0))
 	{
 		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_B))
+		{
 			mpHelpSFX->PlayCue("ClickSound");
 			ExitScene();
+		}
 	}
 	if (CGameWindow::KeyPress(VK_LBUTTON))
 	{
