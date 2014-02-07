@@ -30,6 +30,7 @@ void GameScene::Enter()
 	mpUI = LoadSpriteTex(GetDevice(), "../media/Scene/UI.png");
 	mpMissileIcon = LoadSpriteTex(GetDevice(), "../media/Scene/Missile.png");
 	mpFireIcon = LoadSpriteTex(GetDevice(), "../media/Scene/Flame.png");
+	mpCogsUI = LoadSpriteTex(GetDevice(), "../media/Scene/Cogs.png");
 
 	mpGameBGM = GetEngine()->FindComponent<CSoundComponent>();
 	mpGameSFX = GetEngine()->FindComponent<CSoundComponent>();
@@ -274,6 +275,7 @@ void GameScene::Draw(float dt)
 
 	GetSprite()->Begin(D3DXSPRITE_ALPHABLEND);
 	DrawSprite(GetSprite(), mpUI, 0, 0);
+	DrawSprite(GetSprite(), mpCogsUI, 0, 0);
 	DrawSprite(GetSprite(), mpCrossHair, 0, 0);
 
 	if (mpPlayer->currentWeapon == 1)
