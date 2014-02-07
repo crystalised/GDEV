@@ -3,7 +3,7 @@
 Boss::Boss(CXMesh* inBulletMesh, CTerrain* inTerrain, IDirect3DDevice9* inDevice)
 {
 	mTerrain = inTerrain;
-	flameDirection = D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 1.0f, 0.2f) * (CParticleSystem::GetRandomFloat(0.2f, 1.0f) * 10);
+	flameDirection = D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 1.0f, 0.2f) * (CParticleSystem::GetRandomFloat(0.2f, 1.0f) * 15);
 	bossState = IDLING;
 	gun_CD = 1000;
 
@@ -66,7 +66,7 @@ void Boss::Update(float dt, CMeshNode* inPlayer)
 			}
 			RotateTowardsTarget(yaw, delta);
 
-			D3DXVECTOR3 FORWARD(0.f, 0.f, 1);
+			D3DXVECTOR3 FORWARD(0, 0, 1);
 			D3DXVECTOR3 vel = RotateVector(FORWARD);
 			if (clock() - gun_used_time > gun_CD)
 			{
@@ -160,7 +160,7 @@ void Boss::RotateTowardsTarget(float dirA, float dirB)
 
 void Boss::ChaseTarget(float inYaw, float inDelta)
 {
-	if (!(GetDeltaDirection(inYaw, inDelta) < D2R(TURN * 1.5)))
+	if (!(GetDeltaDirection(inYaw, inDelta) ))
 	{
 		RotateTowardsTarget(inYaw, inDelta);
 	}

@@ -9,7 +9,7 @@ CSoundComponent* mpGameSFX;
 void GameScene::Enter()
 {
 	mpTerrain = new CTerrain(GetDevice(), "../media/Terrain/map.bmp", 5, 0.5);
-	mpTerrain->GenerateTexture(D3DXVECTOR3(0, 1, 0));
+	mpTerrain->GenerateTexture(D3DXVECTOR3(1, 1, 1));
 	//Setup weather
 	mpWeather = new CPrecipitation();
 	mpWeather->Init(GetDevice(), "../media/Particle/Snowflake.png", D3DXVECTOR3(CParticleSystem::GetRandomFloat(.2f, .9f), -2, 0));
@@ -48,11 +48,11 @@ void GameScene::Enter()
 
 	//Setup enemies
 	maxEnemies = 25;
-	for (int x = 260; x < 320; x += randi(12, 16))
+	for (int x = 230; x < 350; x += randi(16, 20))
 	{
-		for (int z = 185; z < 245; z += randi(12, 16))
+		for (int z = 155; z < 275; z += randi(16, 20))
 		{
-			mpEnemy = new Enemy(mpEnemyBulletMesh, mpTerrain);
+			mpEnemy = new Enemy(mpEnemyBulletMesh, mpTerrain, GetDevice());
 			mpEnemy->Init(mpEnemyMesh);
 			mpEnemy->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(x, mpTerrain->GetHeight(x, z), z)));
 			mpEnemy->mLife = 100;
@@ -136,10 +136,10 @@ void GameScene::Update(float dt)
 
 	if (maxEnemies < 25)
 	{
-		int x = randi(260, 320);
-		int z = randi(185, 245);
+		int x = randi(230, 350);
+		int z = randi(155, 275);
 
-		mpEnemy = new Enemy(mpEnemyBulletMesh, mpTerrain);
+		mpEnemy = new Enemy(mpEnemyBulletMesh, mpTerrain, GetDevice());
 		mpEnemy->Init(mpEnemyMesh);
 		mpEnemy->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(x, mpTerrain->GetHeight(x, z), z)));
 		mpEnemy->mLife = 100;
@@ -178,13 +178,13 @@ void GameScene::Update(float dt)
 			D3DXVECTOR3 left = mpBoss->GetPos() + D3DXVECTOR3(-5, 0, 0);
 			D3DXVECTOR3 right = mpBoss->GetPos() + D3DXVECTOR3(5, 0, 0);
 
-			mpEnemy = new Enemy(mpEnemyBulletMesh, mpTerrain);
+			mpEnemy = new Enemy(mpEnemyBulletMesh, mpTerrain, GetDevice());
 			mpEnemy->Init(mpEnemyMesh);
 			mpEnemy->SetPos(mpTerrain->GetPointOnGround(left));
 			mpEnemy->mLife = 200;
 			mEnemies.push_back(mpEnemy);
 
-			mpEnemy = new Enemy(mpEnemyBulletMesh, mpTerrain);
+			mpEnemy = new Enemy(mpEnemyBulletMesh, mpTerrain, GetDevice());
 			mpEnemy->Init(mpEnemyMesh);
 			mpEnemy->SetPos(mpTerrain->GetPointOnGround(right));
 			mpEnemy->mLife = 200;
@@ -529,7 +529,7 @@ void GameScene::HandleInput(float dt)
 		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_A))
 			mpPlayer->Jump();
 		if (mpGamepad->GetLeftTrigger(0) > 0)
-			mpPlayer->SPEED = 30.0f;
+			mpPlayer->SPEED = 20.0f;
 		else
 			mpPlayer->SPEED = 10.0f;
 
@@ -588,7 +588,7 @@ void GameScene::HandleInput(float dt)
 
 		if (CGameWindow::KeyDown(VK_SHIFT))
 		{
-			mpPlayer->SPEED = 30.0f;
+			mpPlayer->SPEED = 20.0f;
 		}
 		else
 		{

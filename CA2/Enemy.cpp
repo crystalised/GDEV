@@ -1,19 +1,33 @@
 #include "Enemy.h"
 
-Enemy::Enemy(CXMesh* inBulletMesh, CTerrain* inTerrain) //Input enemy mesh and terrain, init player
+Enemy::Enemy(CXMesh* inBulletMesh, CTerrain* inTerrain, IDirect3DDevice9* inDevice) //Input enemy mesh and terrain, init player
 {
 	mTerrain = inTerrain;
-	flameDirection = D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 1.0f, 0.2f) * (CParticleSystem::GetRandomFloat(0.2f, 1.0f) * 10);
+	flameDirection = D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 1.0f, 0.2f) * (CParticleSystem::GetRandomFloat(0.2f, 1.0f) * 15);
 	enemyState = IDLING;
 
 	//Init enemy weapon
 	mBulletMesh = inBulletMesh;
+
+	SParticleSetting settings;
+	settings.Size = 0.15f;
+	settings.LifeTime = 0.25f;
+	settings.StartColor = D3DCOLOR_XRGB(36, 231, 26);	// start default is orange
+	settings.EndColor = BLACK_COL;	// cool to black
+	// additive blend
+	settings.SourceBlend = D3DBLEND_ONE;
+	settings.DestBlend = D3DBLEND_ONE;
+	settings.MaxParticles = 100;
+
+	mBulletTrail = new CParticleSystem();
+	mBulletTrail->Init(inDevice, "../media/Particle/flare.bmp", settings);
 }
 
 
 Enemy::~Enemy()
 {
 	DeleteMeshNodes(mBullets);
+	SAFE_DELETE(mBulletTrail);
 }
 
 void Enemy::Update(float dt, CMeshNode* inPlayer)
@@ -53,7 +67,7 @@ void Enemy::Update(float dt, CMeshNode* inPlayer)
 		}
 		RotateTowardsTarget(yaw, delta);
 
-		const D3DXVECTOR3 FORWARD(0.f, 0.f, 1);
+		const D3DXVECTOR3 FORWARD(0, 0, 1);
 		D3DXVECTOR3 vel = RotateVector(FORWARD);
 		if (clock() - gun_used_time > gun_CD)
 		{
@@ -72,6 +86,16 @@ void Enemy::Update(float dt, CMeshNode* inPlayer)
 	}
 	UpdateMeshNodes(mBullets, dt, mTerrain);
 	DeleteDeadMeshNodes(mBullets);
+
+	for (int i = 0; i < mBullets.size(); i++)
+	{
+		D3DXVECTOR3 vel = RotateVector(D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 0.2f, 1.0f));
+		vel *= -50;
+		mBulletTrail->AddParticle(mBullets[i]->GetPos(), vel);
+	}
+
+	mBulletTrail->Update(dt);
+	mBulletTrail->RemoveDeadParticles();
 }
 
 void Enemy::RotateTowardsTarget(float dirA, float dirB)
@@ -123,6 +147,7 @@ void DrawEnemies(vector<Enemy*>& inEnemies)
 		{
 			inEnemies[i]->Draw();
 			DrawMeshNodes(inEnemies[i]->mBullets);
+			inEnemies[i]->mBulletTrail->Draw(IDENTITY_MAT);
 		}
 	}
 }

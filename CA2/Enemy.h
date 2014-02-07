@@ -34,8 +34,10 @@ public:
 	static const int groundOffset = 0; //Offset for enemy from ground
 	D3DXVECTOR3 flameDirection;
 
+	CParticleSystem* mBulletTrail;
+
 public:
-	Enemy(CXMesh* inBulletMesh, CTerrain* inTerrain); //input enemy mesh and terrain to initialze player
+	Enemy(CXMesh* inBulletMesh, CTerrain* inTerrain, IDirect3DDevice9* inDevice); //input enemy mesh and terrain to initialze player
 	~Enemy();
 	void Update(float dt, CMeshNode* inPlayer);
 	void RotateTowardsTarget(float dirA, float dirB);
