@@ -40,6 +40,8 @@ void CGamepadComponent::Update(float dt)
 		else
 			g_Controllers[i].bConnected = false;
 	}
+
+	previousState = XInputGetState(0, &g_Controllers[0].state);
 }
 
 bool CGamepadComponent::IsGamepadConnected(int gamepadID)
@@ -228,4 +230,14 @@ float CGamepadComponent::GetRightTrigger( int gamepadID )
 	{
 		return g_Controllers[gamepadID].state.Gamepad.bRightTrigger / 255.0f;
 	}
+}
+
+bool CGamepadComponent::CheckState(int gamepadID, int buttonId)
+{
+	if (previousState != currentState)
+		return true;
+	else
+		return false;
+	previousState = currentState;
+	
 }
