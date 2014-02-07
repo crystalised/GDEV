@@ -78,10 +78,10 @@ void Boss::Update(float dt, CMeshNode* inPlayer)
 				shot->mScale = 0.5f;
 				shot->mLife = 3000;
 				mBullets.push_back(shot);
-				if (mLife <= 500)
+				if (mLife <= 600)
 				{
 					gun_CD = 700.0f;
-					FORWARD = D3DXVECTOR3(CParticleSystem::GetRandomFloat(0.2, 0.5), 0, 1);
+					FORWARD = D3DXVECTOR3(CParticleSystem::GetRandomFloat(0.1f, 0.4f), 0, 1);
 					D3DXVECTOR3 vel2 = RotateVector(FORWARD);
 					vel2 *= 25;
 					CShot* shot2 = new CShot();
@@ -92,7 +92,32 @@ void Boss::Update(float dt, CMeshNode* inPlayer)
 					shot2->mLife = 3000;
 					mBullets.push_back(shot2);
 
-					FORWARD = D3DXVECTOR3(-CParticleSystem::GetRandomFloat(0.2f, 0.5f), 0.0f, 1.0f);
+					FORWARD = D3DXVECTOR3(-CParticleSystem::GetRandomFloat(0.1f, 0.4f), 0.0f, 1.0f);
+					D3DXVECTOR3 vel3 = RotateVector(FORWARD);
+					vel3 *= 25;
+					CShot* shot3 = new CShot();
+					shot3->Init(mBulletMesh, GetPos(), GetHpr());
+					shot3->mPos = GetPos();
+					shot3->mVel = vel3;
+					shot3->mScale = 0.5f;
+					shot3->mLife = 3000;
+					mBullets.push_back(shot3);
+				}
+				if (mLife <= 350)
+				{
+					gun_CD = 500.0f;
+					FORWARD = D3DXVECTOR3(CParticleSystem::GetRandomFloat(0.4f, 0.7f), 0, 1);
+					D3DXVECTOR3 vel2 = RotateVector(FORWARD);
+					vel2 *= 25;
+					CShot* shot2 = new CShot();
+					shot2->Init(mBulletMesh, GetPos(), GetHpr());
+					shot2->mPos = GetPos();
+					shot2->mVel = vel2;
+					shot2->mScale = 0.5f;
+					shot2->mLife = 3000;
+					mBullets.push_back(shot2);
+
+					FORWARD = D3DXVECTOR3(-CParticleSystem::GetRandomFloat(0.4f, 0.7f), 0.0f, 1.0f);
 					D3DXVECTOR3 vel3 = RotateVector(FORWARD);
 					vel3 *= 25;
 					CShot* shot3 = new CShot();
@@ -111,14 +136,18 @@ void Boss::Update(float dt, CMeshNode* inPlayer)
 		UpdateMeshNodes(mBullets, dt, mTerrain);
 		DeleteDeadMeshNodes(mBullets);
 
-		if (mLife <= 500)
+		if (mLife <= 600)
 		{
 			D3DXVECTOR3 vel = RotateVector(D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 1.0f, 0.0f));
 			vel *= 25;
-			bossPowerUp->AddParticle(GetPos(), vel);
+			if (mLife <= 350)
+				bossPowerUp->AddParticle(GetPos(), vel, D3DCOLOR_XRGB(25, 0, 116), D3DCOLOR_XRGB(0, 0, 0), 0.5f);
+			else
+				bossPowerUp->AddParticle(GetPos(), vel);
 		}
 
 		bossPowerUp->Update(dt);
+		bossPowerUp->RemoveDeadParticles();
 }
 
 void Boss::RotateTowardsTarget(float dirA, float dirB)

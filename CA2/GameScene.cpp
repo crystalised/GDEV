@@ -72,7 +72,7 @@ void GameScene::Enter()
 	//Setup NPC
 	mpNPC = new NPC();
 	mpNPC->Init(mpNPCMesh);
-	mpNPC->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(73.65f, mpTerrain->GetHeight(73.65f, 461.37f), 461.37f)));
+	mpNPC->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(72.0f, mpTerrain->GetHeight(72.0f, 461.37f), 461.37f)));
 	mpNPC->SetHpr(D3DXVECTOR3(-0.09f, 2.35f, 0.0f));
 
 	mpHut = new NPC();

@@ -1,8 +1,8 @@
 /*==============================================
- * GameWindow class for GDEV Engine
- *
- * Written by <YOUR NAME HERE>
- *==============================================*/
+* GameWindow class for GDEV Engine
+*
+* Written by <YOUR NAME HERE>
+*==============================================*/
 #pragma once
 
 #include <windows.h>
@@ -11,15 +11,15 @@
 This class holds all the main functionlaity needed for opening up a window
 of the desired size.
 
-However, its not really designed to be used on its own. 
-Instead use the CGameEngine class. 
+However, its not really designed to be used on its own.
+Instead use the CGameEngine class.
 
 \par References:
 - Wendy Jones (or any other DirectX book) for the basic window stuff
 - http://winprog.org/tutorial for a much more detailed Windows tutorial
 - MSDN for details on capturing all the mouse messages
- - http://msdn.microsoft.com/en-us/library/ms645617%28VS.85%29.aspx mouse wheel code
- - http://msdn.microsoft.com/en-us/library/ms645616%28VS.85%29.aspx mouse move
+- http://msdn.microsoft.com/en-us/library/ms645617%28VS.85%29.aspx mouse wheel code
+- http://msdn.microsoft.com/en-us/library/ms645616%28VS.85%29.aspx mouse move
 
 */
 class CGameWindow
@@ -36,24 +36,24 @@ public:
 	\param hInstance the instance value passed into WinMain
 	\param width,height the desired size of the window
 	\param fullscreen whether this should be a fullscreen window.
-		if fullscreen is true, the window may not actually cover the whole screen
-		but is will not have any of the usual titlebar, etc.
+	if fullscreen is true, the window may not actually cover the whole screen
+	but is will not have any of the usual titlebar, etc.
 	*/
-	bool OpenWin(HINSTANCE hInstance,int width,int height,bool fullscreen=false);
+	bool OpenWin(HINSTANCE hInstance, int width, int height, bool fullscreen = false);
 	/// closes the window
 	void CloseWin();
 	/// runs the window until its closed.
 	/// not used, use CGameEngine::Go() instead
 	virtual int Go(HINSTANCE hInstance);
 	/** returns the window handle.
-	This is useful when certain applications require the windows handle 
+	This is useful when certain applications require the windows handle
 	in their initalisation.
 	*/
-	HWND GetWindow(){return mHWnd;}
+	HWND GetWindow(){ return mHWnd; }
 	/// The instance. Just in case you need it...
-	HINSTANCE GetInstance(){return mInstance;}
+	HINSTANCE GetInstance(){ return mInstance; }
 	/** returns current time (in seconds).
-	Note: The time is does not start at zero, it often starts at 
+	Note: The time is does not start at zero, it often starts at
 	over one million. Therefore users should collect a start time
 	and then make all times relative to that.
 	\code
@@ -65,9 +65,9 @@ public:
 	static float GetTime();
 	/// Returns a rectangle of the window size.
 	/// Useful when you need to make an image be stretched into the window.
-	RECT GetWindowRect(){return mSize;}
+	RECT GetWindowRect(){ return mSize; }
 	/// Returns the aspect ratio for the window.
-	float GetAspectRatio(){return (float(mSize.right))/mSize.bottom;}
+	float GetAspectRatio(){ return (float(mSize.right)) / mSize.bottom; }
 	/// Sets the window title to anything you want.
 	/// \param name the new window name
 	void SetTitle(const char* name);
@@ -77,13 +77,13 @@ public:
 	They are all static, so that they can be called from anywhere.
 	\code
 	if (CGameWindow::KeyPress('A'))
-		...
+	...
 	\endcode
 	However if you in in a class dervied from CGameWindow (like you main app),
 	you can simply call it directly
 	\code
 	if (KeyPress('A'))
-		...
+	...
 	\endcode
 	\{ */
 
@@ -91,7 +91,7 @@ public:
 	\param vk the keycode to use: which could be
 	- 'A'..'Z','0'..'9' for keypresses
 	- VK_LEFT, VK_RIGHT, VK_UP, VK_DOWN for cursor keys
-	- VK_NEXT, VK_PRIOR, VK_HOME, VK_END for page down, page up, home, end 
+	- VK_NEXT, VK_PRIOR, VK_HOME, VK_END for page down, page up, home, end
 	- VK_ENTER, VK_TAB, VK_ESCAPE, VK_SPACE as expected
 	- VK_LBUTTON, VK_MBUTTON, VK_RBUTTON for mouse buttons
 	- and many others (see WinUser.h)
@@ -105,20 +105,20 @@ public:
 	// BAD code:
 	// this condition works ok work ok
 	if (KeyPress(VK_LBUTTON) && mouseOverButtonA)
-		...
+	...
 	// the KeyPress will ALWAYS return false
 	if (KeyPress(VK_LBUTTON) && mouseOverButtonB)
-		...
+	...
 	\endcode
 	You must instead use
 	\code
 	// correct code:
 	if (KeyPress(VK_LBUTTON))
 	{
-		if (mouseOverButtonA)
-			...
-		if (mouseOverButtonB)
-			...
+	if (mouseOverButtonA)
+	...
+	if (mouseOverButtonB)
+	...
 	}
 	\endcode
 	*/
@@ -130,7 +130,7 @@ public:
 	if the key was pressed in the last 20 minutes (oops).
 
 	This code clears the KeyPress 'memory' and stops this effect.
-	This should only be called when needed, as if it is called too often it can disrupt the 
+	This should only be called when needed, as if it is called too often it can disrupt the
 	KeyPress code, so that it always returns false!
 	*/
 	static void ClearKeyPress();
@@ -145,11 +145,11 @@ public:
 	\note mouse tracking becomes irregular once the mouse if outside of the window
 	*/
 	static POINT GetMouseDelta();
-	
+
 	/** returns the mouse wheel value.
 	normally this is either -120,0 or +120
-	\note calling this function will clear the previous value, 
-	so like KeyPress(), only call this once per cycle 
+	\note calling this function will clear the previous value,
+	so like KeyPress(), only call this once per cycle
 	*/
 	static int GetMouseWheel();
 
@@ -166,7 +166,7 @@ protected:
 	void UpdateInput();
 	/// internal function to adjust width & height of window.
 	/// Designed to make the adjustments to account for the size of borders & title bar.
-	void AdjustWindowSize(int& w,int& h,DWORD style);
+	void AdjustWindowSize(int& w, int& h, DWORD style);
 	RECT mSize;	///< the window size
 	HWND mHWnd;	///< the window handle
 	HINSTANCE mInstance;			///< the instance

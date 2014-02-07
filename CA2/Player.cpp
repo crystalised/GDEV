@@ -70,12 +70,12 @@ void Player::Init(IDirect3DDevice9* inDevice, CXMesh* inFlameMesh, CXMesh* inBom
 {
 	mFlameMesh = inFlameMesh;
 
-	flameThrowerLvl = 1;
+	flameThrowerLvl = 2;
 
 	SParticleSetting settings;
 	settings.Size = 0.25f;
-	settings.LifeTime = 0.5f;
-	settings.StartColor = D3DCOLOR_XRGB(0, 42, 255);	// start bright
+	settings.LifeTime = 0.3f;
+	settings.StartColor = D3DCOLOR_XRGB(250, 123, 20);	// start default is orange
 	settings.EndColor = BLACK_COL;	// cool to black
 	// additive blend
 	settings.SourceBlend = D3DBLEND_ONE;
@@ -113,8 +113,12 @@ void Player::UpdateWeapon(float dt)
 	}
 
 	mFlameThrower->Update(dt);
+	mFlameThrower->RemoveDeadParticles();
 	mRocketExplode->Update(dt);
+	mRocketExplode->RemoveDeadParticles();
 	mRocketTrail->Update(dt);
+	mRocketTrail->RemoveDeadParticles();
+
 	UpdateMeshNodes(mFlames, dt, mTerrain);
 	UpdateMeshNodes(mRockets, dt);
 }
@@ -149,10 +153,16 @@ void Player::Shoot()
 		shot->mPos = mPlayer.GetPos() + D3DXVECTOR3(0, 0.3f, 0);
 		shot->mVel = vel;
 		shot->mScale = 0.5f;	// small
-		shot->mLife = 50; //Short life
+		if (flameThrowerLvl == 2)
+			shot->mLife = 50; //Short life
+		else
+			shot->mLife = 100;
 		mFlames.push_back(shot);	// add to vector
 
-		mFlameThrower->AddParticle(mPlayer.GetPos() + D3DXVECTOR3(0, 0.3f, 0), vel); //Spawnpoint of particles
+		if (flameThrowerLvl == 2)
+			mFlameThrower->AddParticle(mPlayer.GetPos() + D3DXVECTOR3(0, 0.3f, 0), vel); //Spawnpoint of particles
+		else
+			mFlameThrower->AddParticle(mPlayer.GetPos() + D3DXVECTOR3(0, 0.3f, 0), vel, D3DCOLOR_XRGB(0, 42, 255), D3DCOLOR_XRGB(0, 0, 0), 0.3);
 		break;
 	}
 	case 2:
@@ -167,7 +177,7 @@ void Player::Shoot()
 			shot->mPos = mPlayer.GetPos() + D3DXVECTOR3(-0.2f, 0.5f, -0.5f);
 			shot->mVel = vel;
 			shot->mScale = 1.0f;
-			shot->mLife = 2000;
+			shot->mLife = 1000;
 			mRockets.push_back(shot);
 			rocket_used_time = clock();
 			break;
