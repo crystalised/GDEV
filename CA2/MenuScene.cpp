@@ -40,6 +40,9 @@ void MenuScene::Update(float dt)
 	CScene::Update(dt);	// MUST CALL BASE CLASS'S Update
 	if (IsTopMost() == false)	return;	// Pause if I'm not the topmost screen
 
+	inQuest = false;
+	NPCScene::SetQuestStatus(inQuest);
+
 	if (mpGamepad->IsGamepadConnected(0))
 	{
 		ShowCursor(false);

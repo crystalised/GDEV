@@ -33,11 +33,10 @@ void NPCScene::Enter()
 	mpButtonTex[8] = LoadSpriteTex(GetDevice(), "../media/scene/teleport.png"); //Teleport button(npcchat5)
 	mpButtonTex[9] = LoadSpriteTex(GetDevice(), "../media/scene/teleport2.png"); //Teleport button(npcchat5) //highlighted
 
-
 	cogObtained = GameScene::GetCogObtained();
 	inQuest = GameScene::GetQuestStatus();
 
-	if (cogObtained == 50)
+	if (cogObtained >= 50)
 	{
 		questComplete = true;
 	}
@@ -47,9 +46,9 @@ void NPCScene::Enter()
 	}
 
 	mpGamepad = GetEngine()->FindComponent<CGamepadComponent>();
-	if (inQuest && cogObtained != 50)
+	if (inQuest && cogObtained < 50)
 		questStage = 3;
-	else if (inQuest && cogObtained == 50)
+	else if (inQuest && cogObtained >= 50)
 		questStage = 4;
 	else
 		questStage = 0;
@@ -67,6 +66,7 @@ void NPCScene::Update(float dt)
 
 	if (mpGamepad->IsGamepadConnected(0))
 	{
+		ShowCursor(false);
 		//DPAD RIGHT/LEFT
 		if (mpGamepad->IsButtonPressed2(0, XINPUT_GAMEPAD_DPAD_RIGHT))
 		{
@@ -94,6 +94,11 @@ void NPCScene::Update(float dt)
 		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_A))
 			leftClick = true;
 
+	}
+	else
+	{
+		ShowCursor(true);
+		SetCursor(HCURSOR IDC_ARROW);
 	}
 	if (CGameWindow::KeyPress(VK_LBUTTON) || leftClick)
 	{
@@ -148,7 +153,7 @@ void NPCScene::Update(float dt)
 }
 void NPCScene::Draw(float dt)
 {
-	GetDevice()->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, BLACK_COL, 1.0f, 0);
+	//GetDevice()->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, BLACK_COL, 1.0f, 0);
 	GetDevice()->BeginScene();
 
 	RECT window = GetEngine()->GetWindowRect();
@@ -237,4 +242,11 @@ bool NPCScene::GetQuestStatus()
 bool NPCScene::TeleToBoss()
 {
 	return teleportToBoss;
+}
+
+void NPCScene::SetQuestStatus(bool a)
+{
+	inQuest = a;
+	questComplete = a;
+	teleportToBoss = a;
 }

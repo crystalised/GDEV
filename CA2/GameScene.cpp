@@ -60,7 +60,7 @@ void GameScene::Enter()
 	}
 
 	//Setup boss
-	mpBoss = new Boss(mpBossBulletMesh, mpTerrain);
+	mpBoss = new Boss(mpBossBulletMesh, mpTerrain, GetDevice());
 	mpBoss->Init(mpBossMesh);
 	mpBoss->SetPos(mpTerrain->GetPointOnGround(D3DXVECTOR3(210, mpTerrain->GetHeight(210, 60), 60)));
 	mpBoss->mLife = 1500;
@@ -104,6 +104,10 @@ void GameScene::Update(float dt)
 	HandleInput(dt);
 	if (mpPlayer->mPlayer.mLife <= 0) //show death scene when player is dead
 	{
+		teleportToBoss = false;
+		bossActive = false;
+		bossSpawned1 = false;
+		bossSpawned2 = false;
 		inQuest = false;
 		ExitScene();
 		GetEngine()->AddScene(new DeathScene());
@@ -114,7 +118,7 @@ void GameScene::Update(float dt)
 	//Quest
 	inQuest = NPCScene::GetQuestStatus();
 
-	if (!bossActive)
+	if (!bossActive && inQuest)
 		teleportToBoss = NPCScene::TeleToBoss();
 
 	//Teleport
@@ -189,7 +193,12 @@ void GameScene::Update(float dt)
 
 		if (mpBoss->mLife <= 0) //Show victory scene when boss is killed
 		{
+			teleportToBoss = false;
+			bossActive = false;
+			bossSpawned1 = false;
+			bossSpawned2 = false;
 			ExitScene();
+			mpGameBGM->StopCue("GameBgm");
 			GetEngine()->AddScene(new VictoryScene());
 		}
 	}
@@ -226,8 +235,10 @@ void GameScene::Draw(float dt)
 	//Boss
 	if (bossActive)
 	{
+		mpPlayer->flameThrowerLvl = 3;
 		mpBoss->Draw();
 		DrawMeshNodes(mpBoss->mBullets);
+		mpBoss->bossPowerUp->Draw(IDENTITY_MAT);
 	}
 
 	//NPC
@@ -239,24 +250,22 @@ void GameScene::Draw(float dt)
 	//Items
 	DrawItems(mCog);
 
-	GetEngine()->DrawColourTint(D3DXCOLOR(0.4, 0, 0, (100 - mpPlayer->mPlayer.mLife) / 100));
+	//stringstream sout;
+	//sout << "Player pos: " << mpPlayer->mPlayer.GetPos();
+	//sout << "Player hpr: " << mpPlayer->mPlayer.GetHpr();
+	//sout << "\nNo of enemies: " << mEnemies.size();
+	//sout << "\nCurrent time: " << clock();
+	//sout << "\nClock: " << clock();
+	//sout << "\n DT: " << dt;
+	//sout << "\n FPS: " << GetEngine()->GetFps();
+	//sout << "\n Health: " << mpPlayer->mPlayer.mLife;
+	//sout << "\n boss Active: " << bossActive;
+	//sout << "\n Boss Health: " << mpBoss->mLife;
+	//sout << "\n Cogs Available: " << cogObtained;
+	//sout << "\n Tele to boss: " << teleportToBoss;
+	//sout << "\n In Quest: " << inQuest;
 
-	stringstream sout;
-	sout << "Player pos: " << mpPlayer->mPlayer.GetPos();
-	sout << "Player hpr: " << mpPlayer->mPlayer.GetHpr();
-	sout << "\nNo of enemies: " << mEnemies.size();
-	sout << "\nCurrent time: " << clock();
-	sout << "\nClock: " << clock();
-	sout << "\n DT: " << dt;
-	sout << "\n FPS: " << GetEngine()->GetFps();
-	sout << "\n Health: " << mpPlayer->mPlayer.mLife;
-	sout << "\n boss Active: " << bossActive;
-	sout << "\n Boss Health: " << mpBoss->mLife;
-	sout << "\n Cogs Available: " << cogObtained;
-	sout << "\n Tele to boss: " << teleportToBoss;
-	sout << "\n In Quest: " << inQuest;
-
-	DrawD3DFont(gameFont, sout.str().c_str(), 20, 20, RED_COL);
+	//DrawD3DFont(gameFont, sout.str().c_str(), 20, 20, RED_COL);
 
 	//Display HP
 	stringstream soutHP;
@@ -371,7 +380,7 @@ void GameScene::CollisionCheck()
 				mpGameSFX->PlayCue("Explosion");
 				mEnemies[en]->Destroy();
 				mpGameSFX->PlayCue("DeathSound");
-				mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 50);
+				mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 30);
 			}
 		}
 		for (int n = 0; n < mEnemies[en]->mBullets.size(); n++)
@@ -398,7 +407,7 @@ void GameScene::CollisionCheck()
 	{
 		if ((mpPlayer->mRockets[b]->GetPos().y) < (mpTerrain->GetHeight(mpPlayer->mRockets[b]->GetPos().x, mpPlayer->mRockets[b]->GetPos().z))) //collision between bomb and ground
 		{
-			mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 50);
+			mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 30);
 			mpPlayer->mRockets[b]->Destroy();
 			mpGameSFX->PlayCue("Explosion");
 		}
@@ -406,12 +415,12 @@ void GameScene::CollisionCheck()
 		if (!mpPlayer->mRockets[b]->IsAlive()) //rocket boom in air
 		{
 			mpGameSFX->PlayCue("Explosion");
-			mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(5.0f, 10.0f), 50);
+			mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(5.0f, 10.0f), 30);
 		}
 
 		if (CollisionMeshNode(mpPlayer->mRockets[b], mpHut)) //rocket and hut
 		{
-			mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 50);
+			mpPlayer->mRocketExplode->Explode(mpPlayer->mRockets[b]->GetPos(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomColour(), CParticleSystem::GetRandomFloat(2.0f, 3.0f), 30);
 			mpPlayer->mRockets[b]->Destroy();
 			mpGameSFX->PlayCue("Explosion");
 		}
@@ -510,7 +519,7 @@ void GameScene::HandleInput(float dt)
 		if (mpGamepad->IsButtonDown(0, XINPUT_GAMEPAD_A))
 			mpPlayer->Jump();
 		if (mpGamepad->GetLeftTrigger(0) > 0)
-			mpPlayer->SPEED = 50.0f;
+			mpPlayer->SPEED = 30.0f;
 		else
 			mpPlayer->SPEED = 10.0f;
 
@@ -565,6 +574,15 @@ void GameScene::HandleInput(float dt)
 		if (CGameWindow::KeyPress(VK_SPACE))
 		{
 			mpPlayer->Jump();
+		}
+
+		if (CGameWindow::KeyDown(VK_SHIFT))
+		{
+			mpPlayer->SPEED = 30.0f;
+		}
+		else
+		{
+			mpPlayer->SPEED = 10.0f;
 		}
 
 		if (CGameWindow::KeyPress('1'))

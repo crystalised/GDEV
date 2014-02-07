@@ -147,6 +147,7 @@ public:
 	void Leave();
 	static bool GetQuestStatus();
 	static bool TeleToBoss();
+	static void SetQuestStatus(bool a);
 
 private:
 	POINT mousepos;

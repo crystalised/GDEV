@@ -34,9 +34,9 @@ void CameraUtils::ChangeCameraMode(CCameraNode& cam, CNode& tgt)
 {
 	if (CGameWindow::KeyPress(VK_F1))		mMode = 0;
 	if (CGameWindow::KeyPress(VK_F2))		mMode = 1;
-	if (CGameWindow::KeyPress(VK_F3))		mMode = 2;
-	if (CGameWindow::KeyPress(VK_F4))		mMode = 3;
-	if (CGameWindow::KeyPress(VK_F5))		mMode = 4;
+	//if (CGameWindow::KeyPress(VK_F3))		mMode = 2;
+	//if (CGameWindow::KeyPress(VK_F4))		mMode = 3;
+	//if (CGameWindow::KeyPress(VK_F5))		mMode = 4;
 
 	switch (mMode)
 	{

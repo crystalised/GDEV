@@ -1,6 +1,6 @@
 #include "Boss.h"
 
-Boss::Boss(CXMesh* inBulletMesh, CTerrain* inTerrain)
+Boss::Boss(CXMesh* inBulletMesh, CTerrain* inTerrain, IDirect3DDevice9* inDevice)
 {
 	mTerrain = inTerrain;
 	flameDirection = D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 1.0f, 0.2f) * (CParticleSystem::GetRandomFloat(0.2f, 1.0f) * 10);
@@ -9,11 +9,24 @@ Boss::Boss(CXMesh* inBulletMesh, CTerrain* inTerrain)
 
 	//Init boss weapon
 	mBulletMesh = inBulletMesh;
+
+	SParticleSetting settings;
+	settings.Size = 0.3f;
+	settings.LifeTime = 0.5f;
+	settings.StartColor = D3DCOLOR_XRGB(255, 0, 192);	// start bright
+	settings.EndColor = BLACK_COL;	// cool to black
+	// additive blend
+	settings.SourceBlend = D3DBLEND_ONE;
+	settings.DestBlend = D3DBLEND_ONE;
+	settings.MaxParticles = 500;
+	bossPowerUp = new CParticleSystem();
+	bossPowerUp->Init(inDevice, "../media/Particle/flare.bmp", settings);
 }
 
 Boss::~Boss()
 {
 	DeleteMeshNodes(mBullets);
+	SAFE_DELETE(bossPowerUp);
 }
 
 void Boss::Update(float dt, CMeshNode* inPlayer)
@@ -97,6 +110,15 @@ void Boss::Update(float dt, CMeshNode* inPlayer)
 		}
 		UpdateMeshNodes(mBullets, dt, mTerrain);
 		DeleteDeadMeshNodes(mBullets);
+
+		if (mLife <= 500)
+		{
+			D3DXVECTOR3 vel = RotateVector(D3DXVECTOR3(CParticleSystem::GetRandomFloat(-0.1f, 0.1f), 1.0f, 0.0f));
+			vel *= 25;
+			bossPowerUp->AddParticle(GetPos(), vel);
+		}
+
+		bossPowerUp->Update(dt);
 }
 
 void Boss::RotateTowardsTarget(float dirA, float dirB)

@@ -19,7 +19,7 @@ class Enemy : public CMeshNode
 	// AI
 	enum STATE {IDLING, CHASING, ATTACKING};
 	static const int ATTACK_RANGE = 15; //Enemy attack range
-	static const int DETECTION_RANGE = 30; //Enemy detection of player range
+	static const int DETECTION_RANGE = 40; //Enemy detection of player range
 	static const int SPEED = 3.0f; //Speed of enemy movement
 	static const int TURN = 2.0f; //Speed of enemy turn
 
