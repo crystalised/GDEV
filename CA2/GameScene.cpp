@@ -525,7 +525,7 @@ void GameScene::HandleInput(float dt)
 
 			if (mpPlayer->currentWeapon == 2)
 			{
-				if (mpPlayer->rocketReady == true)
+				if (mpPlayer->rocketReady == false)
 				{
 					mpGameSFX->PlayCue("MissileLaunch");
 				}
@@ -586,7 +586,7 @@ void GameScene::HandleInput(float dt)
 
 			if (mpPlayer->currentWeapon == 2)
 			{
-				if (mpPlayer->rocketReady == true)
+				if (mpPlayer->rocketReady == false)
 				{
 					mpGameSFX->PlayCue("MissileLaunch");
 				}
