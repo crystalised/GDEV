@@ -88,13 +88,13 @@ void GameScene::Enter()
 	inTown = true;
 	tele_used_time = 0;
 	teleportToBoss = false;
-
-	ShowCursor(false);
 }
 
 void GameScene::Update(float dt)
 {
 	CScene::Update(dt);	// VITAL
+
+	//ShowCursor(false);
 
 	if (IsTopMost() == false) //Pause scene if not top most
 		return;

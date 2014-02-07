@@ -98,6 +98,7 @@ void NPCScene::Update(float dt)
 	else
 	{
 		ShowCursor(true);
+		SetCursor(HCURSOR IDC_ARROW);
 	}
 	if (CGameWindow::KeyPress(VK_LBUTTON) || leftClick)
 	{

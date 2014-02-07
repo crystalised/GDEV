@@ -46,7 +46,7 @@ void MenuScene::Update(float dt)
 	if (mpGamepad->IsGamepadConnected(0))
 	{
 		ShowCursor(false);
-		if (mpGamepad->CheckState(0, XINPUT_GAMEPAD_DPAD_RIGHT))
+		if (mpGamepad->IsButtonPressed(0, XINPUT_GAMEPAD_DPAD_RIGHT))
 		{
 			if (CGameWindow::GetMousePos().x == 50)
 				CGameWindow::SetMousePos(400, 525);
@@ -57,7 +57,7 @@ void MenuScene::Update(float dt)
 			else
 				CGameWindow::SetMousePos(50, 525);
 		}
-		if (mpGamepad->CheckState(0, XINPUT_GAMEPAD_DPAD_LEFT))
+		if (mpGamepad->IsButtonPressed2(0, XINPUT_GAMEPAD_DPAD_LEFT))
 		{
 			if (CGameWindow::GetMousePos().x == 50)
 				CGameWindow::SetMousePos(1100, 525);
@@ -74,6 +74,7 @@ void MenuScene::Update(float dt)
 	else
 	{
 		ShowCursor(true);
+		SetCursor(LoadCursor(NULL, IDC_ARROW));
 	}
 
 	// you will need to detect the mouse clicks
